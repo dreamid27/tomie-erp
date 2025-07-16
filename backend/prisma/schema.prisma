@@ -11,3 +11,43 @@ model product {
   id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String
 }
+
+model customer {
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String
+  quotation quotation[]
+}
+
+model quotation {
+  id             String   @id @default(uuid()) @db.Uuid
+  code           String
+  date           DateTime
+  customer_name  String
+  customer_id    String             @db.Uuid
+  street_address String
+  city           String
+  phone          String
+
+  note         String?
+  subtotal     Float
+  other_amount Float
+  total_price  Float
+  created_at   DateTime
+  updated_at   DateTime @updatedAt
+
+  customer customer @relation(fields: [customer_id], references: [id])
+  details quotation_detail[]
+}
+
+model quotation_detail {
+  id          String   @id @default(uuid()) @db.Uuid
+  description String
+  unit_price  Float
+  qty         Int
+  total_price Float
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  quotation_id String @db.Uuid
+  quotation    quotation @relation(fields: [quotation_id], references: [id])
+}

@@ -11,6 +11,16 @@ async function main() {
       { name: 'Portable SSD 1TB' },
     ],
   });
+
+  await prisma.customer.createMany({
+    data: [
+      { name: 'Alice Johnson' },
+      { name: 'Bob Smith' },
+      { name: 'Charlie Nguyen' },
+      { name: 'Diana Patel' },
+      { name: 'Ethan Garcia' },
+    ],
+  });
 }
 
 main()

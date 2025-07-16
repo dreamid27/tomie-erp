@@ -6,6 +6,6 @@ export class AppService {
   constructor(private prisma: PrismaService) {}
 
   getHello() {
-    return this.prisma.product.findMany();
+    return this.prisma.customer.findMany();
   }
 }
