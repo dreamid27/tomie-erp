@@ -74,9 +74,9 @@ export class QuotationService {
         date: createQuotationDto.date,
         customer_name: customer.name,
         customer_id: customer.id,
-        street_address: 'STREET_ADDRESS',
-        city: 'CUSTOMER_CITY',
-        phone: 'PHONE',
+        street_address: customer.street_address || '',
+        city: customer.city || '',
+        phone: customer.phone || '',
         details: {
           create: details,
         },

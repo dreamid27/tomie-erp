@@ -14,11 +14,36 @@ async function main() {
 
   await prisma.customer.createMany({
     data: [
-      { name: 'Alice Johnson' },
-      { name: 'Bob Smith' },
-      { name: 'Charlie Nguyen' },
-      { name: 'Diana Patel' },
-      { name: 'Ethan Garcia' },
+      {
+        name: 'Alice Johnson',
+        street_address: '123 Main St',
+        city: 'Anytown',
+        phone: '123-456-7890',
+      },
+      {
+        name: 'Bob Smith',
+        street_address: '456 Oak Ave',
+        city: 'Othertown',
+        phone: '321-654-9870',
+      },
+      {
+        name: 'Charlie Nguyen',
+        street_address: '789 Oak Ave',
+        city: 'Othertown',
+        phone: '321-654-9870',
+      },
+      {
+        name: 'Diana Patel',
+        street_address: '456 Pine Rd',
+        city: 'Anothertown',
+        phone: '456-789-1230',
+      },
+      {
+        name: 'Ethan Garcia',
+        street_address: '101 Elm St',
+        city: 'Yetanothertown',
+        phone: '567-890-1234',
+      },
     ],
   });
 }

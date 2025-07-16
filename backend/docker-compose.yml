@@ -9,14 +9,14 @@ services:
       - ./postgres:/var/lib/postgresql/data
     ports:
       - '5432:5432'
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: tomie-erp-backend
-    ports:
-      - '3030:3000'
-    depends_on:
-      - db
-    volumes:
-      - ./src:/app/src
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: tomie-erp-backend
+  #   ports:
+  #     - '3030:3000'
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - ./src:/app/src

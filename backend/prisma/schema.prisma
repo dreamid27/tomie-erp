@@ -13,8 +13,12 @@ model product {
 }
 
 model customer {
-  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name      String
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String
+  street_address String?
+  city           String?
+  phone          String?
+
   quotation quotation[]
 }
 
