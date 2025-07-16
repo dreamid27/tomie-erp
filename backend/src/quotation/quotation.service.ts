@@ -8,7 +8,10 @@ import { QUOTATION_STATUS } from './status.enum';
 export class QuotationService {
   constructor(private prisma: PrismaService) {}
 
-  generateQuotationCode(customerUUID: string) {
+  generateQuotationCode(
+    type: 'quotation' | 'sales_order',
+    customerUUID: string,
+  ) {
     // Ambil 4 karakter terakhir dari UUID pelanggan (tanpa tanda strip)
     const cleanUUID = customerUUID.replace(/-/g, '');
     const clientCode = cleanUUID.slice(-4).toUpperCase();
@@ -22,8 +25,10 @@ export class QuotationService {
     // Unique number dari timestamp (last 6 digits)
     const uniqueNum = Date.now().toString().slice(-6);
 
+    const prefix = type === 'quotation' ? 'QTN' : 'SO';
+
     // Format akhir
-    const quotationCode = `QTN/${year}/${month}/${day}/${clientCode}-${uniqueNum}`;
+    const quotationCode = `${prefix}/${year}/${month}/${day}/${clientCode}-${uniqueNum}`;
     return quotationCode;
   }
 
@@ -40,7 +45,7 @@ export class QuotationService {
       );
     }
 
-    let quotationCode = this.generateQuotationCode(customer.id);
+    let quotationCode = this.generateQuotationCode('quotation', customer.id);
     let isCodeExist = !!(await this.prisma.quotation.findFirst({
       where: {
         code: quotationCode,
@@ -48,7 +53,7 @@ export class QuotationService {
     }));
 
     while (isCodeExist) {
-      quotationCode = this.generateQuotationCode(customer.id);
+      quotationCode = this.generateQuotationCode('quotation', customer.id);
       isCodeExist = !!(await this.prisma.quotation.findFirst({
         where: {
           code: quotationCode,
@@ -72,7 +77,7 @@ export class QuotationService {
 
     return this.prisma.quotation.create({
       data: {
-        code: this.generateQuotationCode(customer.id),
+        code: this.generateQuotationCode('quotation', customer.id),
         date: createQuotationDto.date,
         customer_name: customer.name,
         customer_id: customer.id,
@@ -113,6 +118,9 @@ export class QuotationService {
       where: {
         id: id,
       },
+      include: {
+        details: true,
+      },
     });
 
     if (!quotation)
@@ -132,7 +140,48 @@ export class QuotationService {
         },
       });
 
-      // TODO: create sales order
+      const details = quotation.details.map((detail) => ({
+        product_id: detail.product_id,
+        description: detail.description,
+        note: detail.note,
+        unit_price: detail.unit_price,
+        qty: detail.qty,
+        total_price: detail.unit_price * detail.qty,
+      }));
+
+      const totalPriceDetail = details.reduce(
+        (total, detail) => total + detail.total_price,
+        0,
+      );
+
+      await tx.sales_order.create({
+        data: {
+          code: this.generateQuotationCode(
+            'sales_order',
+            quotation.customer_id,
+          ),
+          quotation_id: quotation.id,
+          date: quotation.date,
+          customer_name: quotation.customer_name,
+          customer_id: quotation.customer_id,
+          street_address: quotation.street_address || '',
+          city: quotation.city || '',
+          phone: quotation.phone || '',
+          details: {
+            create: details,
+          },
+          note: quotation.note,
+          subtotal: totalPriceDetail,
+          other_amount: quotation.other_amount,
+          total_price: totalPriceDetail + quotation.other_amount,
+          status: QUOTATION_STATUS.PENDING,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        include: {
+          details: true,
+        },
+      });
     });
   }
 

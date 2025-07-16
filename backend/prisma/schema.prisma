@@ -8,9 +8,10 @@ datasource db {
 }
 
 model product {
-  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name             String
-  quotation_detail quotation_detail[]
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String
+  quotation_detail   quotation_detail[]
+  sales_order_detail sales_order_detail[]
 }
 
 model customer {
@@ -20,7 +21,8 @@ model customer {
   city           String?
   phone          String?
 
-  quotation quotation[]
+  quotation   quotation[]
+  sales_order sales_order[]
 }
 
 model quotation {
@@ -40,22 +42,62 @@ model quotation {
   created_at     DateTime
   updated_at     DateTime @updatedAt
 
-  customer customer           @relation(fields: [customer_id], references: [id])
-  details  quotation_detail[]
+  customer    customer           @relation(fields: [customer_id], references: [id])
+  details     quotation_detail[]
+  sales_order sales_order[]
 }
 
 model quotation_detail {
-  id          String   @id @default(uuid()) @db.Uuid
-  product_id  String   @db.Uuid
-  description String
-  note        String?
-  unit_price  Float
-  qty         Int
-  total_price Float
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id           String   @id @default(uuid()) @db.Uuid
+  product_id   String   @db.Uuid
+  description  String
+  note         String?
+  unit_price   Float
+  qty          Int
+  total_price  Float
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  quotation_id String   @db.Uuid
 
-  product      product   @relation(fields: [product_id], references: [id])
-  quotation_id String    @db.Uuid
-  quotation    quotation @relation(fields: [quotation_id], references: [id])
+  product   product   @relation(fields: [product_id], references: [id])
+  quotation quotation @relation(fields: [quotation_id], references: [id])
+}
+
+model sales_order {
+  id             String   @id @default(uuid()) @db.Uuid
+  code           String
+  date           DateTime
+  customer_name  String
+  customer_id    String   @db.Uuid
+  street_address String
+  city           String
+  phone          String
+  note           String?
+  subtotal       Float
+  other_amount   Float
+  total_price    Float
+  status         String   @default("pending")
+  created_at     DateTime
+  updated_at     DateTime @updatedAt
+  quotation_id   String?  @db.Uuid
+
+  customer  customer             @relation(fields: [customer_id], references: [id])
+  details   sales_order_detail[]
+  quotation quotation?           @relation(fields: [quotation_id], references: [id])
+}
+
+model sales_order_detail {
+  id            String   @id @default(uuid()) @db.Uuid
+  product_id    String   @db.Uuid
+  description   String
+  note          String?
+  unit_price    Float
+  qty           Int
+  total_price   Float
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  sales_orderId String?  @db.Uuid
+
+  product     product      @relation(fields: [product_id], references: [id])
+  sales_order sales_order? @relation(fields: [sales_orderId], references: [id])
 }

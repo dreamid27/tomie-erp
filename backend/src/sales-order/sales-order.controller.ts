@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete } from '@nestjs/common';
 import { SalesOrderService } from './sales-order.service';
 import { CreateSalesOrderDto } from './dto/create-sales-order.dto';
 import { UpdateSalesOrderDto } from './dto/update-sales-order.dto';
@@ -7,11 +7,6 @@ import { UpdateSalesOrderDto } from './dto/update-sales-order.dto';
 export class SalesOrderController {
   constructor(private readonly salesOrderService: SalesOrderService) {}
 
-  @Post()
-  create(@Body() createSalesOrderDto: CreateSalesOrderDto) {
-    return this.salesOrderService.create(createSalesOrderDto);
-  }
-
   @Get()
   findAll() {
     return this.salesOrderService.findAll();
@@ -19,11 +14,14 @@ export class SalesOrderController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.salesOrderService.findOne(+id);
+    return this.salesOrderService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSalesOrderDto: UpdateSalesOrderDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSalesOrderDto: UpdateSalesOrderDto,
+  ) {
     return this.salesOrderService.update(+id, updateSalesOrderDto);
   }
 
