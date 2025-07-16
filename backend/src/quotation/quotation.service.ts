@@ -57,7 +57,9 @@ export class QuotationService {
     }
 
     const details = createQuotationDto.details.map((detail) => ({
+      product_id: detail.product_id,
       description: detail.description,
+      note: detail.note,
       unit_price: detail.unit_price,
       qty: detail.qty,
       total_price: detail.unit_price * detail.qty,

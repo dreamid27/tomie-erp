@@ -12,9 +12,26 @@ import {
 import { Type } from 'class-transformer';
 
 class DetailDto {
-  @ApiProperty({ description: 'Description of the item' })
+  @ApiProperty({
+    description: 'Product ID',
+    example: 'c9b368eb-f290-45fa-87e5-71d950e9aa6b',
+  })
+  @IsString()
+  product_id: string;
+
+  @ApiProperty({
+    description: 'Product name',
+    example: 'Wireless Mouse',
+  })
   @IsString()
   description: string;
+
+  @ApiProperty({
+    description: 'Note of the item',
+    example: 'This is a note',
+  })
+  @IsString()
+  note: string;
 
   @ApiProperty({ description: 'Unit price of the item' })
   @IsNumber()
@@ -40,7 +57,7 @@ export class CreateQuotationDto {
 
   @ApiProperty({
     description: 'Customer UUID',
-    example: 'c430b4b5-9d1a-42d8-a01d-28e463c36460',
+    example: '9bb580ac-067c-4f97-b344-34ebe213ae7f',
   })
   @IsUUID()
   customer_id: string;
@@ -62,8 +79,20 @@ export class CreateQuotationDto {
     type: [DetailDto],
     description: 'Order details',
     example: [
-      { description: 'Item 1', unit_price: 10000, qty: 1 },
-      { description: 'Item 2', unit_price: 10000, qty: 2 },
+      {
+        product_id: 'c9b368eb-f290-45fa-87e5-71d950e9aa6b',
+        description: 'Mechanical Keyboard',
+        note: 'This is a note',
+        unit_price: 10000,
+        qty: 1,
+      },
+      {
+        product_id: '2d972346-92af-4a6d-8e11-a5edde038823',
+        description: 'Mechanical Keyboard',
+        note: '',
+        unit_price: 10000,
+        qty: 2,
+      },
     ],
   })
   @IsArray()
