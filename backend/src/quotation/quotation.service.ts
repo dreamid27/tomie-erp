@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import { PrismaService } from 'src/prisma.service';
+import { QUOTATION_STATUS } from './status.enum';
 
 @Injectable()
 export class QuotationService {
@@ -83,6 +84,7 @@ export class QuotationService {
         subtotal: totalPriceDetail,
         other_amount: createQuotationDto.other_amount,
         total_price: totalPriceDetail + createQuotationDto.other_amount,
+        status: QUOTATION_STATUS.PENDING,
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -104,8 +106,32 @@ export class QuotationService {
     });
   }
 
-  update(id: number, updateQuotationDto: UpdateQuotationDto) {
-    return `This action updates a #${id} quotation`;
+  async update(id: string, updateQuotationDto: UpdateQuotationDto) {
+    const quotation = await this.prisma.quotation.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!quotation)
+      throw new BadRequestException(`quotation with id ${id} not found`);
+
+    if (quotation.status !== QUOTATION_STATUS.PENDING)
+      throw new BadRequestException(`quotation with id ${id} is not pending`);
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.quotation.update({
+        where: {
+          id,
+        },
+        data: {
+          status: updateQuotationDto.status,
+          updated_at: new Date(),
+        },
+      });
+
+      // TODO: create sales order
+    });
   }
 
   remove(id: number) {

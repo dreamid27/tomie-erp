@@ -35,7 +35,7 @@ export class QuotationController {
     @Param('id') id: string,
     @Body() updateQuotationDto: UpdateQuotationDto,
   ) {
-    return this.quotationService.update(+id, updateQuotationDto);
+    return this.quotationService.update(id, updateQuotationDto);
   }
 
   @Delete(':id')

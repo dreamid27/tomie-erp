@@ -23,20 +23,20 @@ model quotation {
   code           String
   date           DateTime
   customer_name  String
-  customer_id    String             @db.Uuid
+  customer_id    String   @db.Uuid
   street_address String
   city           String
   phone          String
+  note           String?
+  subtotal       Float
+  other_amount   Float
+  total_price    Float
+  status         String   @default("pending")
+  created_at     DateTime
+  updated_at     DateTime @updatedAt
 
-  note         String?
-  subtotal     Float
-  other_amount Float
-  total_price  Float
-  created_at   DateTime
-  updated_at   DateTime @updatedAt
-
-  customer customer @relation(fields: [customer_id], references: [id])
-  details quotation_detail[]
+  customer customer           @relation(fields: [customer_id], references: [id])
+  details  quotation_detail[]
 }
 
 model quotation_detail {
@@ -48,6 +48,6 @@ model quotation_detail {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  quotation_id String @db.Uuid
+  quotation_id String    @db.Uuid
   quotation    quotation @relation(fields: [quotation_id], references: [id])
 }
