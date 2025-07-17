@@ -15,8 +15,10 @@ export interface CreateQuotationDto {
   details: QuotationDetail[];
 }
 
+const API_URL = `${import.meta.env.VITE_API_URL}`;
+
 export const createQuotation = async (data: CreateQuotationDto) => {
-  const response = await fetch("http://localhost:3000/quotation", {
+  const response = await fetch(`${API_URL}/quotation`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -33,7 +35,7 @@ export const createQuotation = async (data: CreateQuotationDto) => {
 
 export const generateQuotationCode = async (): Promise<string> => {
   // This is a placeholder. In a real app, you might want to get this from your backend
-  const response = await fetch("/api/quotation/latest-code");
+  const response = await fetch(`${API_URL}/quotation/code`);
 
   if (!response.ok) {
     throw new Error("Failed to generate quotation code");

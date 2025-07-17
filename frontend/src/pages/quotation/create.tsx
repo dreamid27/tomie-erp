@@ -21,6 +21,8 @@ import {
   generateQuotationCode,
   type CreateQuotationDto,
 } from "@/services/quotation.service";
+import { getCustomers } from "@/services/customer.service";
+import { getProducts } from "@/services/product.service";
 
 export default function CreateQuotationPage() {
   const queryClient = useQueryClient();
@@ -30,18 +32,12 @@ export default function CreateQuotationPage() {
   // This would be replaced with actual customers and products data
   const { data: customers = [] } = useQuery({
     queryKey: ["customers"],
-    queryFn: async () => {
-      const response = await fetch("http://localhost:3000/customer");
-      return response.json();
-    },
+    queryFn: async () => getCustomers(),
   });
 
   const { data: products = [] } = useQuery({
     queryKey: ["products"],
-    queryFn: async () => {
-      const response = await fetch("http://localhost:3000/product");
-      return response.json();
-    },
+    queryFn: async () => getProducts(),
   });
 
   const { data: latestCode } = useQuery({
