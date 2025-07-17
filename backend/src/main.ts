@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('Tomie ERP')
     .setDescription('The ERP API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('ERP')
     .build();
 

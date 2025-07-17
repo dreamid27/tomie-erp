@@ -6,10 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { QuotationService } from './quotation.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
+import { SalesAuthGuard } from 'src/auth/sales-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('quotation')
 export class QuotationController {
@@ -30,6 +33,8 @@ export class QuotationController {
     return this.quotationService.findOne(id);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(SalesAuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,
