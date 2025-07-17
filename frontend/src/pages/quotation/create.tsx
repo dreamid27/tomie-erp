@@ -1,74 +1,85 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
-import { Plus, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-import { createQuotation, generateQuotationCode, type CreateQuotationDto } from '@/services/quotation.service';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
+import { Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import {
+  createQuotation,
+  generateQuotationCode,
+  type CreateQuotationDto,
+} from "@/services/quotation.service";
 
 export default function CreateQuotationPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const today = format(new Date(), 'yyyy-MM-dd');
+  const today = format(new Date(), "yyyy-MM-dd");
 
   // This would be replaced with actual customers and products data
   const { data: customers = [] } = useQuery({
-    queryKey: ['customers'],
+    queryKey: ["customers"],
     queryFn: async () => {
-      const response = await fetch('/api/customers');
+      const response = await fetch("http://localhost:3000/customer");
       return response.json();
     },
   });
 
   const { data: products = [] } = useQuery({
-    queryKey: ['products'],
+    queryKey: ["products"],
     queryFn: async () => {
-      const response = await fetch('/api/products');
+      const response = await fetch("http://localhost:3000/product");
       return response.json();
     },
   });
 
   const { data: latestCode } = useQuery({
-    queryKey: ['quotation', 'latest-code'],
+    queryKey: ["quotation", "latest-code"],
     queryFn: generateQuotationCode,
   });
 
-  const { control, handleSubmit, watch, setValue } = useForm<CreateQuotationDto>({
-    defaultValues: {
-      code: latestCode || 'Q-0001',
-      date: today,
-      customer_id: '',
-      note: '',
-      other_amount: 0,
-      details: [
-        {
-          product_id: '',
-          description: '',
-          note: '',
-          unit_price: 0,
-          qty: 1,
-        },
-      ],
-    },
-  });
+  const { control, handleSubmit, watch, setValue } =
+    useForm<CreateQuotationDto>({
+      defaultValues: {
+        code: latestCode || "Q-0001",
+        date: today,
+        customer_id: "",
+        note: "",
+        other_amount: 0,
+        details: [
+          {
+            product_id: "",
+            description: "",
+            note: "",
+            unit_price: 0,
+            qty: 1,
+          },
+        ],
+      },
+    });
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'details',
+    name: "details",
   });
 
   const createMutation = useMutation({
     mutationFn: createQuotation,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['quotations'] });
-      toast.success('Quotation created successfully');
-      navigate('/quotation');
+      queryClient.invalidateQueries({ queryKey: ["quotations"] });
+      toast.success("Quotation created successfully");
+      navigate("/quotation");
     },
     onError: (error) => {
       toast.error(`Failed to create quotation: ${error.message}`);
@@ -76,23 +87,27 @@ export default function CreateQuotationPage() {
   });
 
   const onSubmit = (data: CreateQuotationDto) => {
-    createMutation.mutate(data);
+    console.log(data, "data");
+    createMutation.mutate({
+      ...data,
+      date: new Date(data.date).toISOString(),
+    });
   };
 
   // Calculate subtotal
-  const subtotal = watch('details')?.reduce(
+  const subtotal = watch("details")?.reduce(
     (sum, item) => sum + (item.unit_price || 0) * (item.qty || 0),
     0
   );
 
-  const otherAmount = watch('other_amount') || 0;
+  const otherAmount = watch("other_amount") || 0;
   const total = subtotal + (Number.isNaN(otherAmount) ? 0 : otherAmount);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Create New Quotation</h1>
-        <Button onClick={() => navigate('/quotation')} variant="outline">
+        <Button onClick={() => navigate("/quotation")} variant="outline">
           Back to List
         </Button>
       </div>
@@ -129,7 +144,7 @@ export default function CreateQuotationPage() {
                 <Controller
                   name="customer_id"
                   control={control}
-                  rules={{ required: 'Customer is required' }}
+                  rules={{ required: "Customer is required" }}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>
@@ -160,9 +175,9 @@ export default function CreateQuotationPage() {
                 size="sm"
                 onClick={() =>
                   append({
-                    product_id: '',
-                    description: '',
-                    note: '',
+                    product_id: "",
+                    description: "",
+                    note: "",
                     unit_price: 0,
                     qty: 1,
                   })
@@ -190,11 +205,13 @@ export default function CreateQuotationPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor={`details.${index}.product_id`}>Product</Label>
+                    <Label htmlFor={`details.${index}.product_id`}>
+                      Product
+                    </Label>
                     <Controller
                       name={`details.${index}.product_id`}
                       control={control}
-                      rules={{ required: 'Product is required' }}
+                      rules={{ required: "Product is required" }}
                       render={({ field }) => (
                         <Select
                           onValueChange={(value) => {
@@ -229,16 +246,20 @@ export default function CreateQuotationPage() {
                       )}
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 hidden">
                     <Label htmlFor={`details.${index}.description`}>
                       Description
                     </Label>
                     <Controller
                       name={`details.${index}.description`}
                       control={control}
-                      rules={{ required: 'Description is required' }}
+                      rules={{ required: "Description is required" }}
                       render={({ field }) => (
-                        <Input id={`details.${index}.description`} {...field} />
+                        <Input
+                          disabled
+                          id={`details.${index}.description`}
+                          {...field}
+                        />
                       )}
                     />
                   </div>
@@ -250,8 +271,8 @@ export default function CreateQuotationPage() {
                       name={`details.${index}.unit_price`}
                       control={control}
                       rules={{
-                        required: 'Unit price is required',
-                        min: { value: 0, message: 'Must be positive' },
+                        required: "Unit price is required",
+                        min: { value: 0, message: "Must be positive" },
                       }}
                       render={({ field }) => (
                         <Input
@@ -272,8 +293,8 @@ export default function CreateQuotationPage() {
                       name={`details.${index}.qty`}
                       control={control}
                       rules={{
-                        required: 'Quantity is required',
-                        min: { value: 1, message: 'Must be at least 1' },
+                        required: "Quantity is required",
+                        min: { value: 1, message: "Must be at least 1" },
                       }}
                       render={({ field }) => (
                         <Input
@@ -334,9 +355,9 @@ export default function CreateQuotationPage() {
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span>
-                    {new Intl.NumberFormat('id-ID', {
-                      style: 'currency',
-                      currency: 'IDR',
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
                       minimumFractionDigits: 0,
                     }).format(subtotal)}
                   </span>
@@ -361,9 +382,9 @@ export default function CreateQuotationPage() {
                     />
                   </div>
                   <span>
-                    {new Intl.NumberFormat('id-ID', {
-                      style: 'currency',
-                      currency: 'IDR',
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
                       minimumFractionDigits: 0,
                     }).format(otherAmount)}
                   </span>
@@ -371,9 +392,9 @@ export default function CreateQuotationPage() {
                 <div className="border-t pt-2 flex justify-between font-bold">
                   <span>Total</span>
                   <span>
-                    {new Intl.NumberFormat('id-ID', {
-                      style: 'currency',
-                      currency: 'IDR',
+                    {new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
                       minimumFractionDigits: 0,
                     }).format(total)}
                   </span>
@@ -387,12 +408,12 @@ export default function CreateQuotationPage() {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate('/quotation')}
+            onClick={() => navigate("/quotation")}
           >
             Cancel
           </Button>
           <Button type="submit" disabled={createMutation.isPending}>
-            {createMutation.isPending ? 'Saving...' : 'Save Quotation'}
+            {createMutation.isPending ? "Saving..." : "Save Quotation"}
           </Button>
         </div>
       </form>
