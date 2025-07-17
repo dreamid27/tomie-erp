@@ -19,7 +19,6 @@ import { Badge } from "@/components/ui/badge";
 
 export default function QuotationPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const {
     data: quotations,
