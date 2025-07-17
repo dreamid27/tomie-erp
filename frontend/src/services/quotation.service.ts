@@ -17,6 +17,32 @@ export interface CreateQuotationDto {
 
 const API_URL = `${import.meta.env.VITE_API_URL}`;
 
+export interface Quotation {
+  id: string;
+  code: string;
+  date: string;
+  customer_name: string;
+  customer_id: string;
+  street_address: string;
+  city: string;
+  phone: string;
+  note: string;
+  subtotal: number;
+  other_amount: number;
+  total_price: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const fetchQuotations = async (): Promise<Quotation[]> => {
+  const response = await fetch(`${API_URL}/quotation`);
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+};
+
 export const createQuotation = async (data: CreateQuotationDto) => {
   const response = await fetch(`${API_URL}/quotation`, {
     method: "POST",
@@ -43,4 +69,22 @@ export const generateQuotationCode = async (): Promise<string> => {
 
   const data = await response.json();
   return data.code || "Q-0001";
+};
+
+export const approveQuotation = async (id: string) => {
+  const response = await fetch(`${API_URL}/quotation/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      status: "approved",
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to approve quotation");
+  }
+
+  return await response.json();
 };

@@ -183,6 +183,8 @@ export class QuotationService {
         },
       });
     });
+
+    return `quotation with id ${id} approved and sales order created`;
   }
 
   remove(id: number) {

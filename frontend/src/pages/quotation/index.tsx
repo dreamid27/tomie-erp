@@ -1,50 +1,52 @@
-import { useQuery } from '@tanstack/react-query';
-import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-
-interface Quotation {
-  id: string;
-  code: string;
-  date: string;
-  customer_name: string;
-  customer_id: string;
-  street_address: string;
-  city: string;
-  phone: string;
-  note: string;
-  subtotal: number;
-  other_amount: number;
-  total_price: number;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
-
-const fetchQuotations = async (): Promise<Quotation[]> => {
-  const response = await fetch('http://localhost:3000/quotation');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  approveQuotation,
+  fetchQuotations,
+  type Quotation,
+} from "@/services/quotation.service";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 export default function QuotationPage() {
   const navigate = useNavigate();
-  
-  const { data: quotations, isLoading, isError, error } = useQuery<Quotation[], Error>({
-    queryKey: ['quotations'],
-    queryFn: fetchQuotations
+  const queryClient = useQueryClient();
+
+  const {
+    data: quotations,
+    refetch: refetchQuotations,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Quotation[], Error>({
+    queryKey: ["quotations"],
+    queryFn: fetchQuotations,
+  });
+
+  const { mutate: approve, isPending: isApproving } = useMutation({
+    mutationFn: (id: string) => approveQuotation(id),
+    onSuccess: () => {
+      refetchQuotations();
+    },
   });
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'dd MMM yyyy');
+    return format(new Date(dateString), "dd MMM yyyy");
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -82,63 +84,78 @@ export default function QuotationPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Quotations</h1>
-        <Button onClick={() => navigate('/quotation/create')}>
+        <Button onClick={() => navigate("/quotation/create")}>
           Create New Quotation
         </Button>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Code
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {quotations?.map((quotation) => (
-                <tr key={quotation.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                    {quotation.code}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(quotation.date)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{quotation.customer_name}</div>
-                    <div className="text-sm text-gray-500">{quotation.city}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      quotation.status === 'approved' 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {quotation.status.charAt(0).toUpperCase() + quotation.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    {formatCurrency(quotation.total_price)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">Code</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Subtotal</TableHead>
+              <TableHead>Other Amount</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {quotations?.map((quotation) => (
+              <TableRow key={quotation.id}>
+                <TableCell className="font-medium">{quotation.code}</TableCell>
+                <TableCell>{formatDate(quotation.date)}</TableCell>
+                <TableCell>
+                  <div className="font-medium">{quotation.customer_name}</div>
+                  <div className="text-sm text-gray-500">{quotation.city}</div>
+                </TableCell>
+                <TableCell>{formatCurrency(quotation.subtotal)}</TableCell>
+                <TableCell>{formatCurrency(quotation.other_amount)}</TableCell>
+                <TableCell className="font-semibold">
+                  {formatCurrency(quotation.total_price)}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={
+                      quotation.status === "draft"
+                        ? "outline"
+                        : quotation.status === "sent"
+                        ? "secondary"
+                        : quotation.status === "approved"
+                        ? "default"
+                        : "destructive"
+                    }
+                  >
+                    {quotation.status.charAt(0).toUpperCase() +
+                      quotation.status.slice(1)}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate(`/quotation/${quotation.id}`)}
+                  >
+                    View
+                  </Button>
+                  {quotation.status === "pending" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => approve(quotation.id)}
+                      disabled={isApproving}
+                    >
+                      {isApproving ? "Approving..." : "Approve"}
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
