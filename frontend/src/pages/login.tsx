@@ -1,53 +1,107 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { login, type LoginCredentials } from "@/services/auth.service";
+
+// Define the form schema with Zod
+const loginSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const navigate = useNavigate();
 
-  const handleLogin = (userType: "customer" | "sales") => {
-    // Here you would typically handle the login logic
-    // For now, we'll just navigate to the appropriate page
-    if (userType === "customer") {
-      navigate("/customer-dashboard"); // Update this route as needed
-    } else {
-      navigate("/sales-dashboard"); // Update this route as needed
-    }
+  const { mutate: loginUser, isPending: isLoading } = useMutation({
+    mutationFn: (credentials: LoginCredentials) => login(credentials),
+    onSuccess: (data) => {
+      localStorage.setItem("token", data.token);
+      toast.success("Login successful!");
+      navigate("/dashboard");
+    },
+    onError: (error: Error) => {
+      console.log(error, "error");
+      toast.error(error.message || "Login failed. Please try again.");
+    },
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    loginUser(data);
   };
 
+  const form = useForm<LoginFormData>({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+    resolver: zodResolver(loginSchema),
+  });
+
   return (
-    <div className="flex items-center justify-center min-h-screen ">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Welcome to TOMIE ERP
-          </CardTitle>
-          <CardDescription className="text-center">
-            Please select your login type
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Button
-            onClick={() => handleLogin("customer")}
-            className="w-full h-12 text-lg"
-            variant="outline"
-          >
-            Login as Customer
-          </Button>
-          <Button
-            onClick={() => handleLogin("sales")}
-            className="w-full h-12 text-lg"
-          >
-            Login as Sales
-          </Button>
-        </CardContent>
-      </Card>
+    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
+      <div className="w-full max-w-sm">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        placeholder="Enter your username"
+                        {...field}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Enter your password"
+                        {...field}
+                        disabled={isLoading}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign in"}
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }

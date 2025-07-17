@@ -21,7 +21,7 @@ export class AuthService {
     const user = await this.userService.findOne(username);
     if (!user) throw new BadRequestException();
     const isPasswordValid = await bcrypt.compare(pass, user.password);
-    if (!isPasswordValid) throw new BadRequestException();
+    if (!isPasswordValid) throw new BadRequestException('Password is invalid');
     const payload = { sub: user.id, username: user.username };
     return {
       access_token: await this.jwtService.signAsync(payload),
