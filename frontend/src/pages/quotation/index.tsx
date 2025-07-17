@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 interface Quotation {
   id: string;
@@ -28,6 +30,8 @@ const fetchQuotations = async (): Promise<Quotation[]> => {
 };
 
 export default function QuotationPage() {
+  const navigate = useNavigate();
+  
   const { data: quotations, isLoading, isError, error } = useQuery<Quotation[], Error>({
     queryKey: ['quotations'],
     queryFn: fetchQuotations
@@ -78,6 +82,9 @@ export default function QuotationPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Quotations</h1>
+        <Button onClick={() => navigate('/quotation/create')}>
+          Create New Quotation
+        </Button>
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">

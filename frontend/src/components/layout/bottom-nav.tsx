@@ -1,9 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, FileText, FileCheck } from "lucide-react";
+import { FileText, FileCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { name: "Home", path: "/", icon: Home },
   { name: "Quotation", path: "/quotation", icon: FileText },
   { name: "Sales Order", path: "/sales-order", icon: FileCheck },
 ];
