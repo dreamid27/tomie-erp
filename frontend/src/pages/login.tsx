@@ -15,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { login, type LoginCredentials } from "@/services/auth.service";
+import { TOKEN } from "@/constants";
 
 // Define the form schema with Zod
 const loginSchema = z.object({
@@ -30,9 +31,9 @@ export default function LoginPage() {
   const { mutate: loginUser, isPending: isLoading } = useMutation({
     mutationFn: (credentials: LoginCredentials) => login(credentials),
     onSuccess: (data) => {
-      localStorage.setItem("token", data.token);
+      localStorage.setItem(TOKEN, data.access_token);
       toast.success("Login successful!");
-      navigate("/dashboard");
+      navigate("/");
     },
     onError: (error: Error) => {
       console.log(error, "error");
