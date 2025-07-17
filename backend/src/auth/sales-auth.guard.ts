@@ -5,17 +5,18 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
 import { Request } from 'express';
-
-const salesSet = new Set([3, 4]);
 
 @Injectable()
 export class SalesAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private userService: UserService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
@@ -28,7 +29,8 @@ export class SalesAuthGuard implements CanActivate {
       // so that we can access it in our route handlers
       request['user'] = payload;
 
-      if (!salesSet.has(payload.sub)) throw new UnauthorizedException();
+      const user = await this.userService.findOne(payload.username);
+      if (!user || user.role !== 'sales') throw new UnauthorizedException();
     } catch {
       throw new UnauthorizedException();
     }

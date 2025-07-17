@@ -1,5 +1,13 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
 const prisma = new PrismaClient();
+
+const SALT_ROUNDS = 10;
+
+async function hashPassword(password: string): Promise<string> {
+  return await bcrypt.hash(password, SALT_ROUNDS);
+}
 
 async function main() {
   await prisma.product.createMany({
@@ -17,6 +25,38 @@ async function main() {
       {
         id: '9bb580ac-067c-4f97-b344-34ebe213ae7f',
         name: 'Portable SSD 1TB',
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Create users
+  const salesPassword = await hashPassword('sales123');
+  const customerPassword = await hashPassword('customer123');
+
+  await prisma.user.createMany({
+    data: [
+      // Sales users
+      {
+        username: 'sales1',
+        password: salesPassword,
+        role: 'sales',
+      },
+      {
+        username: 'sales2',
+        password: salesPassword,
+        role: 'sales',
+      },
+      // Customer users
+      {
+        username: 'customer1',
+        password: customerPassword,
+        role: 'customer',
+      },
+      {
+        username: 'customer2',
+        password: customerPassword,
+        role: 'customer',
       },
     ],
     skipDuplicates: true,

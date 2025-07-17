@@ -25,6 +25,13 @@ model customer {
   sales_order sales_order[]
 }
 
+model user {
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username       String
+  password       String
+  role           String
+}
+
 model quotation {
   id             String   @id @default(uuid()) @db.Uuid
   code           String

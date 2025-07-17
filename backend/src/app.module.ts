@@ -7,9 +7,24 @@ import { SalesOrderModule } from './sales-order/sales-order.module';
 import { PrismaService } from './prisma.service';
 import { ProductModule } from './product/product.module';
 import { CustomerModule } from './customer/customer.module';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), QuotationModule, SalesOrderModule, ProductModule, CustomerModule],
+  imports: [
+    ConfigModule.forRoot(),
+    QuotationModule,
+    SalesOrderModule,
+    ProductModule,
+    CustomerModule,
+    AuthModule,
+    UserModule,
+    JwtModule.register({
+      global: true,
+      secret: 'DREAMID27XFARISHERE',
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
