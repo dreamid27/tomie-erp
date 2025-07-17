@@ -6,9 +6,10 @@ import { QuotationModule } from './quotation/quotation.module';
 import { SalesOrderModule } from './sales-order/sales-order.module';
 import { PrismaService } from './prisma.service';
 import { ProductModule } from './product/product.module';
+import { CustomerModule } from './customer/customer.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), QuotationModule, SalesOrderModule, ProductModule],
+  imports: [ConfigModule.forRoot(), QuotationModule, SalesOrderModule, ProductModule, CustomerModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
