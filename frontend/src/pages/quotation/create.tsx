@@ -183,7 +183,7 @@ export default function CreateQuotationPage() {
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-md font-bold">Create Quotation</h1>
         <Button onClick={() => navigate('/quotation')} variant="outline">
           Back to List
@@ -210,7 +210,7 @@ export default function CreateQuotationPage() {
                       <FormControl>
                         <Button
                           variant="outline"
-                          className="w-full justify-between font-normal"
+                          className="w-full justify-between font-normal bg-input  dark:bg-input/30 border-input"
                         >
                           {field.value
                             ? format(new Date(field.value), 'PPP')
