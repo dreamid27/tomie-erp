@@ -38,6 +38,30 @@ tomie-erp/
 └── README.md                 # This file
 ```
 
+## 🐳 Docker Compose (Production)
+
+### Running the Full Stack
+
+To run both backend and frontend with Docker Compose:
+
+```bash
+# Build and start all services
+docker-compose -f backend/docker-compose.yml up -d --build
+docker-compose -f frontend/docker-compose.yml up -d --build
+
+# Or run them separately:
+
+# 1. Start database and backend
+cd backend
+docker-compose up -d --build
+
+# 2. Start frontend (in another terminal)
+cd frontend
+docker-compose up -d --build
+```
+
+After running the above commands, the application should be accessible at `http://localhost:3000` for backend and `http://localhost:5173` for frontend.
+
 ## 🚀 Development Mode
 
 ### Prerequisites
@@ -52,7 +76,7 @@ First, start the PostgreSQL database:
 
 ```bash
 # Start PostgreSQL using Docker
-docker-compose up -d db
+docker-compose -f backend/docker-compose.yml up -d db
 
 # Or if you have PostgreSQL installed locally, make sure it's running
 # with the following configuration:
@@ -112,28 +136,6 @@ The frontend will be available at `http://localhost:5173`
 
 Once the backend is running, you can access the Swagger API documentation at:
 `http://localhost:3000/api`
-
-## 🐳 Docker Compose (Production)
-
-### Running the Full Stack
-
-To run both backend and frontend with Docker Compose:
-
-```bash
-# Build and start all services
-docker-compose -f backend/docker-compose.yml up -d
-docker-compose -f frontend/docker-compose.yml up -d
-
-# Or run them separately:
-
-# 1. Start database and backend
-cd backend
-docker-compose up -d
-
-# 2. Start frontend (in another terminal)
-cd frontend
-docker-compose up -d
-```
 
 ### Service URLs
 
