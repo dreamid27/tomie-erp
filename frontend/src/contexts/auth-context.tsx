@@ -5,6 +5,7 @@ import { getUserFromToken, type JWTPayload } from '@/lib/jwt';
 interface AuthContextType {
   user: JWTPayload | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   isSalesUser: boolean;
   isCustomerUser: boolean;
   login: (token: string) => void;
@@ -29,6 +30,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<JWTPayload | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const refreshUser = () => {
     const token = localStorage.getItem(TOKEN);
@@ -45,6 +47,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(null);
       setIsAuthenticated(false);
     }
+    setIsLoading(false);
   };
 
   const login = (token: string) => {
@@ -70,6 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     user,
     isAuthenticated,
+    isLoading,
     isSalesUser,
     isCustomerUser,
     login,
