@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -101,8 +101,46 @@ export class QuotationService {
     });
   }
 
-  findAll() {
-    return this.prisma.quotation.findMany();
+  async findAll({
+    page = 1,
+    pageSize = 10,
+  }: {
+    page: number;
+    pageSize: number;
+  }) {
+    try {
+      const skip = (page - 1) * pageSize;
+      const [total, data] = await Promise.all([
+        this.prisma.quotation.count(),
+        this.prisma.quotation.findMany({
+          include: {
+            details: true,
+          },
+          skip,
+          take: pageSize,
+          orderBy: {
+            created_at: 'desc', // Most recent first
+          },
+        }),
+      ]);
+
+      const totalPages = Math.ceil(total / pageSize);
+
+      return {
+        data,
+        total,
+        page,
+        pageSize,
+        totalPages,
+        hasNextPage: page < totalPages,
+      };
+    } catch (error) {
+      console.error(
+        `Error fetching paginated quotations: ${error.message}`,
+        error.stack,
+      );
+      throw new BadRequestException('Failed to fetch quotations');
+    }
   }
 
   findOne(id: string) {

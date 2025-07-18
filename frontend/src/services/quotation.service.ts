@@ -17,6 +17,15 @@ export interface CreateQuotationDto {
 
 const API_URL = `${import.meta.env.VITE_API_URL}`;
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+}
+
 export interface Quotation {
   id: string;
   code: string;
@@ -33,27 +42,39 @@ export interface Quotation {
   status: string;
   created_at: string;
   updated_at: string;
+  details: {
+    id: string;
+    product_id: string;
+    description: string;
+    note: string;
+    unit_price: number;
+    qty: number;
+    total_price: number;
+    created_at: string;
+    updated_at: string;
+    quotation_id: string;
+  }[];
 }
 
-export const fetchQuotations = async (): Promise<Quotation[]> => {
-  const response = await fetch(`${API_URL}/quotation`);
+export const fetchQuotations = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<Quotation>> => {
+  const response = await fetch(`${API_URL}/quotation?page=${page}&pageSize=${pageSize}`);
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    throw new Error('Network response was not ok');
   }
   return response.json();
 };
 
 export const createQuotation = async (data: CreateQuotationDto) => {
   const response = await fetch(`${API_URL}/quotation`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   });
 
   if (!response.ok) {
-    throw new Error("Failed to create quotation");
+    throw new Error('Failed to create quotation');
   }
 
   return await response.json();
@@ -64,26 +85,26 @@ export const generateQuotationCode = async (): Promise<string> => {
   const response = await fetch(`${API_URL}/quotation/code`);
 
   if (!response.ok) {
-    throw new Error("Failed to generate quotation code");
+    throw new Error('Failed to generate quotation code');
   }
 
   const data = await response.json();
-  return data.code || "Q-0001";
+  return data.code || 'Q-0001';
 };
 
 export const approveQuotation = async (id: string) => {
   const response = await fetch(`${API_URL}/quotation/${id}`, {
-    method: "PATCH",
+    method: 'PATCH',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      status: "approved",
+      status: 'approved',
     }),
   });
 
   if (!response.ok) {
-    throw new Error("Failed to approve quotation");
+    throw new Error('Failed to approve quotation');
   }
 
   return await response.json();

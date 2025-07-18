@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { QuotationService } from './quotation.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import { SalesAuthGuard } from 'src/auth/sales-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { PaginationParamsDto } from './dto/pagination-params.dto';
+import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 
 @Controller('quotation')
 export class QuotationController {
@@ -24,8 +26,13 @@ export class QuotationController {
   }
 
   @Get()
-  findAll() {
-    return this.quotationService.findAll();
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'pageSize', required: false, type: Number })
+  findAll(@Query() { page = 1, pageSize = 10 }: PaginationParamsDto) {
+    return this.quotationService.findAll({
+      page: Number(page),
+      pageSize: Number(pageSize),
+    });
   }
 
   @Get(':id')

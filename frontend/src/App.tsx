@@ -28,7 +28,7 @@ function App() {
                 <Route element={<MainLayout />}>
                   <Route path="/">
                     <Route index element={<QuotationPage />} />
-                    <Route path="create" element={<CreateQuotationPage />} />
+                    <Route path="/create" element={<CreateQuotationPage />} />
                   </Route>
                   <Route path="/sales-order" element={<SalesOrderPage />} />
                 </Route>
