@@ -10,7 +10,7 @@ export interface CreateQuotationDto {
   code: string;
   date: string;
   customer_id: string;
-  note: string;
+  note?: string;
   other_amount: number;
   details: QuotationDetail[];
 }
@@ -56,8 +56,13 @@ export interface Quotation {
   }[];
 }
 
-export const fetchQuotations = async (page: number = 1, pageSize: number = 10): Promise<PaginatedResponse<Quotation>> => {
-  const response = await fetch(`${API_URL}/quotation?page=${page}&pageSize=${pageSize}`);
+export const fetchQuotations = async (
+  page: number = 1,
+  pageSize: number = 10
+): Promise<PaginatedResponse<Quotation>> => {
+  const response = await fetch(
+    `${API_URL}/quotation?page=${page}&pageSize=${pageSize}`
+  );
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }

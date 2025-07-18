@@ -1,19 +1,19 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query";
-import { format } from "date-fns";
-import type { PaginatedResponse } from "@/services/quotation.service";
-import { PlusIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+} from '@tanstack/react-query';
+import { format } from 'date-fns';
+import type { PaginatedResponse } from '@/services/quotation.service';
+import { PlusIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import {
   approveQuotation,
   fetchQuotations,
   type Quotation,
-} from "@/services/quotation.service";
+} from '@/services/quotation.service';
 import {
   Table,
   TableBody,
@@ -21,12 +21,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
-import { BadgeCheckIcon, XCircleIcon, ClockIcon } from "lucide-react";
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
+import { BadgeCheckIcon, XCircleIcon, ClockIcon } from 'lucide-react';
 
 export default function QuotationPage() {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export default function QuotationPage() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery<PaginatedResponse<Quotation>>({
-    queryKey: ["quotations", pageSize],
+    queryKey: ['quotations', pageSize],
     queryFn: ({ pageParam }) => fetchQuotations(pageParam as number, pageSize),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
@@ -75,8 +75,8 @@ export default function QuotationPage() {
   const { mutate: approve, isPending: isApproving } = useMutation({
     mutationFn: (id: string) => approveQuotation(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["quotations"] });
-      toast.success("Quotation approved successfully");
+      queryClient.invalidateQueries({ queryKey: ['quotations'] });
+      toast.success('Quotation approved successfully');
       setIsConfirmOpen(false);
       setQuotationToApprove(null);
     },
@@ -104,13 +104,13 @@ export default function QuotationPage() {
   };
 
   const formatDate = (dateString: string) => {
-    return format(new Date(dateString), "dd MMM yyyy");
+    return format(new Date(dateString), 'dd MMM yyyy');
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -155,7 +155,7 @@ export default function QuotationPage() {
             </p>
           )}
         </div>
-        <Button onClick={() => navigate("/create")}>
+        <Button onClick={() => navigate('/quotation/create')}>
           <PlusIcon className="mr-2 h-4 w-4" /> Create New
         </Button>
       </div>
@@ -194,13 +194,13 @@ export default function QuotationPage() {
                 <TableCell>
                   <Badge
                     variant={
-                      quotation.status === "draft"
-                        ? "outline"
-                        : quotation.status === "sent"
-                        ? "secondary"
-                        : quotation.status === "approved"
-                        ? "default"
-                        : "destructive"
+                      quotation.status === 'draft'
+                        ? 'outline'
+                        : quotation.status === 'sent'
+                        ? 'secondary'
+                        : quotation.status === 'approved'
+                        ? 'default'
+                        : 'destructive'
                     }
                   >
                     {quotation.status.charAt(0).toUpperCase() +
@@ -216,7 +216,7 @@ export default function QuotationPage() {
                   >
                     View
                   </Button>
-                  {quotation.status === "pending" && (
+                  {quotation.status === 'pending' && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -225,8 +225,8 @@ export default function QuotationPage() {
                       aria-label="Approve Quotation"
                     >
                       {isApproving && quotationToApprove === quotation.id
-                        ? "Approving..."
-                        : "Approve"}
+                        ? 'Approving...'
+                        : 'Approve'}
                     </Button>
                   )}
                 </TableCell>
@@ -256,20 +256,20 @@ export default function QuotationPage() {
                   <p>
                     <Badge
                       className={`capitalize ${
-                        quotation.status === "approved"
-                          ? "bg-green-100 text-green-800 dark:bg-green-600 dark:text-green-200"
-                          : quotation.status === "rejected"
-                          ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                        quotation.status === 'approved'
+                          ? 'bg-green-100 text-green-800 dark:bg-green-600 dark:text-green-200'
+                          : quotation.status === 'rejected'
+                          ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                          : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                       }`}
                     >
-                      {quotation.status === "approved" && (
+                      {quotation.status === 'approved' && (
                         <BadgeCheckIcon className="h-3 w-3 mr-1" />
                       )}
-                      {quotation.status === "rejected" && (
+                      {quotation.status === 'rejected' && (
                         <XCircleIcon className="h-3 w-3 mr-1" />
                       )}
-                      {quotation.status === "pending" && (
+                      {quotation.status === 'pending' && (
                         <ClockIcon className="h-3 w-3 mr-1" />
                       )}
                       {quotation.status}
@@ -281,14 +281,14 @@ export default function QuotationPage() {
               <div className="flex flex-col gap-2 bg-black/15 dark:bg-white/15 p-4 rounded-lg">
                 {quotation.details.map((detail, i) => (
                   <div key={detail.id} className="text-sm">
-                    {i + 1}. {detail.description}, {detail.qty} x{" "}
+                    {i + 1}. {detail.description}, {detail.qty} x{' '}
                     <span className="text-md font-medium">
                       {formatCurrency(detail.unit_price)}
                     </span>
                   </div>
                 ))}
               </div>
-              {quotation.status === "pending" && isSales && (
+              {quotation.status === 'pending' && isSales && (
                 <div className="flex items-end justify-end">
                   <Button
                     onClick={() => handleApproveClick(quotation.id)}
@@ -297,8 +297,8 @@ export default function QuotationPage() {
                     }
                   >
                     {isApproving && quotationToApprove === quotation.id
-                      ? "Approving..."
-                      : "Approve"}
+                      ? 'Approving...'
+                      : 'Approve'}
                   </Button>
                 </div>
               )}
@@ -350,7 +350,7 @@ export default function QuotationPage() {
                 onClick={confirmApprove}
                 disabled={isApproving}
               >
-                {isApproving ? "Approving..." : "Approve"}
+                {isApproving ? 'Approving...' : 'Approve'}
               </Button>
             </div>
           </div>
