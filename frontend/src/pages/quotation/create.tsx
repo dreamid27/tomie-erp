@@ -182,7 +182,7 @@ export default function CreateQuotationPage() {
   const total = subtotal + (Number.isNaN(otherAmount) ? 0 : otherAmount);
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto p-4 max-w-4xl">
       <div className="flex justify-between items-center">
         <h1 className="text-md font-bold">Create Quotation</h1>
         <Button onClick={() => navigate('/quotation')} variant="outline">

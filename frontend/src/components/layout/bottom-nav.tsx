@@ -1,11 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { FileText, FileCheck, Settings } from 'lucide-react';
+import { FileText, FileCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { name: 'Quotation', path: '/quotation', icon: FileText },
   { name: 'Sales Order', path: '/sales-order', icon: FileCheck },
-  { name: 'Settings', path: '/settings', icon: Settings },
 ];
 
 export function BottomNav() {
