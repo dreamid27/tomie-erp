@@ -1,3 +1,12 @@
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+}
+
 export interface SalesOrder {
   id: string;
   code: string;
@@ -32,7 +41,39 @@ export interface SalesOrder {
 export const getSalesOrder = async (): Promise<SalesOrder[]> => {
   const response = await fetch(`${import.meta.env.VITE_API_URL}/sales-order`);
   if (!response.ok) {
-    throw new Error("Network response was not ok");
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
+
+export const fetchSalesOrders = async (
+  page: number = 1,
+  pageSize: number = 10,
+  status?: string
+): Promise<PaginatedResponse<SalesOrder>> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    pageSize: pageSize.toString(),
+  });
+
+  if (status) {
+    params.append('status', status);
+  }
+
+  const token = localStorage.getItem('token');
+
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/sales-order?${params.toString()}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
   }
   return response.json();
 };
