@@ -34,7 +34,6 @@ import {
 import { toast } from 'sonner';
 import {
   createQuotation,
-  generateQuotationCode,
   type CreateQuotationDto,
 } from '@/services/quotation.service';
 import { getCustomers, type Customer } from '@/services/customer.service';
@@ -82,15 +81,10 @@ export default function CreateQuotationPage() {
     queryFn: async () => getProducts(),
   });
 
-  const { data: latestCode } = useQuery({
-    queryKey: ['quotation', 'latest-code'],
-    queryFn: generateQuotationCode,
-  });
-
   const form = useForm<QuotationFormData>({
     resolver: zodResolver(quotationFormSchema),
     defaultValues: {
-      code: latestCode || 'Q-0001',
+      code: 'Q-0001',
       date: today,
       customer_id: isCustomerUser && userCustomerId ? userCustomerId : '',
       note: '',

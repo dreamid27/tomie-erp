@@ -121,18 +121,6 @@ export const createQuotation = async (data: CreateQuotationDto) => {
   return await response.json();
 };
 
-export const generateQuotationCode = async (): Promise<string> => {
-  // This is a placeholder. In a real app, you might want to get this from your backend
-  const response = await fetch(`${API_URL}/quotation/code`);
-
-  if (!response.ok) {
-    throw new Error('Failed to generate quotation code');
-  }
-
-  const data = await response.json();
-  return data.code || 'Q-0001';
-};
-
 export const fetchQuotationById = async (id: string): Promise<Quotation> => {
   const token = localStorage.getItem('token');
 
