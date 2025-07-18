@@ -96,6 +96,9 @@ The backend will be available at `http://localhost:3000`
 # Navigate to frontend directory (in a new terminal)
 cd frontend
 
+# Set up environment variables (create .env file if needed)
+copy .env.example .env
+
 # Install dependencies
 npm install
 
@@ -154,59 +157,6 @@ docker-compose down
 docker stop $(docker ps -q)
 ```
 
-## 🛠️ Available Scripts
-
-### Backend Scripts
-
-```bash
-npm run start          # Start production server
-npm run start:dev      # Start development server with hot reload
-npm run start:debug    # Start development server with debugging
-npm run build          # Build for production
-npm run test           # Run unit tests
-npm run test:e2e       # Run end-to-end tests
-npm run lint           # Run ESLint
-npm run format         # Format code with Prettier
-```
-
-### Frontend Scripts
-
-```bash
-npm run dev            # Start development server
-npm run build          # Build for production
-npm run preview        # Preview production build
-npm run lint           # Run ESLint
-```
-
-### Database Scripts
-
-```bash
-# Run from backend directory
-npx prisma migrate dev     # Create and apply new migration
-npx prisma migrate deploy  # Apply migrations to database
-npx prisma generate        # Generate Prisma client
-npx prisma db seed         # Seed database with initial data
-npx prisma studio          # Open Prisma Studio (database GUI)
-```
-
-## 🔧 Environment Variables
-
-### Backend (.env)
-
-```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres
-JWT_SECRET=your-jwt-secret-key
-PORT=3000
-```
-
-### Frontend
-
-Environment variables can be set in `.env` file in the frontend directory:
-
-```env
-VITE_API_URL=http://localhost:3000
-```
-
 ## 📝 Development Notes
 
 - The backend uses NestJS with TypeScript
@@ -215,30 +165,3 @@ VITE_API_URL=http://localhost:3000
 - Authentication: JWT tokens
 - UI Components: Radix UI with Tailwind CSS
 - The application supports role-based access control (sales/customer roles)
-
-## 🐛 Troubleshooting
-
-### Database Connection Issues
-
-1. Make sure PostgreSQL is running
-2. Check if the DATABASE_URL is correct
-3. Verify database credentials
-
-### Port Conflicts
-
-- Backend default port: 3000
-- Frontend default port: 5173
-- Database default port: 5432
-
-Change ports in the respective configuration files if needed.
-
-### Docker Issues
-
-```bash
-# Clean up Docker containers and images
-docker-compose down --volumes --remove-orphans
-docker system prune -a
-
-# Rebuild containers
-docker-compose build --no-cache
-```
