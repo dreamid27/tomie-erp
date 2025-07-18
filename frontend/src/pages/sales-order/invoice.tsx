@@ -298,8 +298,22 @@ export default function InvoicePage() {
           </Card>
         </div>
 
+        {/* Notes */}
+        {salesOrder.note && (
+          <div className="mb-8 print:mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-900">
+              Notes
+            </h2>
+            <div className="bg-gray-50 p-4 rounded-lg dark:bg-gray-50">
+              <p className="text-gray-700 dark:text-gray-700">
+                {salesOrder.note}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Footer */}
-        <div className="text-center text-sm text-gray-500 mt-12 print:mt-8">
+        <div className="text-center text-sm text-gray-500 mt-12 print:mt-8 dark:text-gray-500">
           <p>Thank you for your business!</p>
           <p className="mt-2">
             Generated on {format(new Date(), 'dd MMMM yyyy HH:mm')}
