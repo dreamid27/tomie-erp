@@ -207,12 +207,6 @@ export default function CreateQuotationPage() {
           {/* Header Section - Quotation Basic Info */}
           <div className="bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10 dark:border-white/10 rounded-lg px-4 py-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">
-                  Quotation Code
-                </p>
-                <p className="text-lg font-semibold">{form.watch('code')}</p>
-              </div>
               <FormField
                 control={form.control}
                 name="date"
