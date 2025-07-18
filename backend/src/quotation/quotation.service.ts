@@ -119,11 +119,15 @@ export class QuotationService {
     pageSize = 10,
     status,
     excludeStatus,
+    userRole,
+    customerId,
   }: {
     page: number;
     pageSize: number;
     status?: string;
     excludeStatus?: string;
+    userRole?: string;
+    customerId?: string;
   }) {
     try {
       const skip = (page - 1) * pageSize;
@@ -136,6 +140,12 @@ export class QuotationService {
       } else if (excludeStatus) {
         whereClause.status = { not: excludeStatus };
       }
+
+      // Add customer filtering for customer users
+      if (userRole === 'customer' && customerId) {
+        whereClause.customer_id = customerId;
+      }
+      // Sales users can see all quotations (no additional filtering needed)
 
       const [total, data] = await Promise.all([
         this.prisma.quotation.count({ where: whereClause }),
@@ -171,11 +181,16 @@ export class QuotationService {
     }
   }
 
-  findOne(id: string) {
+  findOne(id: string, userRole?: string, customerId?: string) {
+    const whereClause: any = { id };
+
+    // Add customer filtering for customer users
+    if (userRole === 'customer' && customerId) {
+      whereClause.customer_id = customerId;
+    }
+
     return this.prisma.quotation.findUniqueOrThrow({
-      where: {
-        id,
-      },
+      where: whereClause,
       include: {
         details: true,
       },

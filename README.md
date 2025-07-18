@@ -9,6 +9,8 @@ for login, you can use the following credentials:
 - username: customer1 (password: customer123)
 - username: customer2 (password: customer123)
 
+[Download or watch the demo](demo.mp4)
+
 ![Screenshot](image1.png)
 ![Screenshot](image2.png)
 ![Screenshot](image3.png)
@@ -73,6 +75,8 @@ docker-compose up -d --build
 ```
 
 After running the above commands, the application should be accessible at `http://localhost:3000` for backend and `http://localhost:5173` for frontend.
+
+you can also access the API documentation at `http://localhost:3000/api`
 
 for login, you can use the following credentials:
 

@@ -29,6 +29,8 @@ export class QuotationController {
     return this.quotationService.create(createQuotationDto, user);
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Get()
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'pageSize', required: false, type: Number })
@@ -42,18 +44,25 @@ export class QuotationController {
       status,
       excludeStatus,
     }: PaginationParamsDto & { status?: string; excludeStatus?: string },
+    @Request() req: any,
   ) {
+    const user = req.user;
     return this.quotationService.findAll({
       page: Number(page),
       pageSize: Number(pageSize),
       status,
       excludeStatus,
+      userRole: user?.role,
+      customerId: user?.customer_id,
     });
   }
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.quotationService.findOne(id);
+  findOne(@Param('id') id: string, @Request() req: any) {
+    const user = req.user;
+    return this.quotationService.findOne(id, user?.role, user?.customer_id);
   }
 
   @ApiBearerAuth()

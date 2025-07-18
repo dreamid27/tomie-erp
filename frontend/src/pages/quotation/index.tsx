@@ -31,6 +31,7 @@ import {
 import { toast } from 'sonner';
 import { BadgeCheckIcon, XCircleIcon, ClockIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { QuotationCardSkeletonList } from '@/components/quotation/quotation-card-skeleton';
 
 type FilterTab = 'pending' | 'reviewed';
 
@@ -164,16 +165,28 @@ export default function QuotationPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Quotations</h1>
-        <div className="animate-pulse">
-          <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-          <div className="h-10 bg-gray-200 rounded mb-2"></div>
-          <div className="space-y-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-12 bg-gray-100 rounded"></div>
-            ))}
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-2xl font-bold">Quotation List</h1>
+            <p className="text-sm text-muted-foreground">
+              Loading quotations...
+            </p>
           </div>
         </div>
+
+        {/* Skeleton Tabs */}
+        <div className="mb-6">
+          <div className="flex space-x-1 bg-muted p-1 rounded-lg w-fit">
+            <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Skeleton Cards */}
+        <QuotationCardSkeletonList
+          count={5}
+          showApproveButton={activeTab === 'pending'}
+        />
       </div>
     );
   }
