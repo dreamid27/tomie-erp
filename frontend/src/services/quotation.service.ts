@@ -167,5 +167,5 @@ export const approveQuotation = async (id: string) => {
     throw new Error('Failed to approve quotation');
   }
 
-  return await response.json();
+  return await response.text();
 };
