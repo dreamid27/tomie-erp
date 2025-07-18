@@ -3,8 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: tomie-erp-backend
+    container_name: tomie-erp-frontend
     ports:
-      - '3000:3000'
+      - '5173:80'
     volumes:
       - ./src:/app/src
