@@ -5,10 +5,11 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 RUN npm install
+
 COPY . .
 
-RUN npx prisma generate
-RUN npm run build && npx prisma migrate deploy
+# Generate Prisma Client
+RUN npm run build && npx prisma generate
 
 # production mode
-CMD ["node", "dist/main"]
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/main"]

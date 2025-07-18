@@ -6,3 +6,4 @@ dist
 *.log
 *.md
 .git
+.env
