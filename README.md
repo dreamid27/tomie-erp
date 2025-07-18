@@ -9,6 +9,11 @@ for login, you can use the following credentials:
 - username: customer1 (password: customer123)
 - username: customer2 (password: customer123)
 
+![Screenshot](image1.png)
+![Screenshot](image2.png)
+![Screenshot](image3.png)
+![Screenshot](image4.png)
+
 ## 📁 Folder Structure
 
 ```
