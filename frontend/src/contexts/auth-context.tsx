@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { TOKEN } from '@/constants';
-import { getUserFromToken, JWTPayload } from '@/lib/jwt';
+import { getUserFromToken, type JWTPayload } from '@/lib/jwt';
 
 interface AuthContextType {
   user: JWTPayload | null;

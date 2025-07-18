@@ -21,6 +21,7 @@ import {
   type Quotation,
 } from '@/services/quotation.service';
 import { useAuth } from '@/contexts/auth-context';
+import { AuditHistory } from '@/components/quotation/audit-history';
 
 export default function QuotationDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -224,7 +225,7 @@ export default function QuotationDetailPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {quotation.details.map((detail, index) => (
+              {quotation.details.map((detail) => (
                 <div key={detail.id} className="border rounded-lg p-4">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
                     <div className="flex-1">
@@ -284,6 +285,9 @@ export default function QuotationDetailPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Audit History */}
+        <AuditHistory auditLog={quotation.audit_log} />
       </div>
     </div>
   );

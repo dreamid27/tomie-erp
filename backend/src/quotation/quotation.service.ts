@@ -3,10 +3,15 @@ import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import { PrismaService } from 'src/prisma.service';
 import { QUOTATION_STATUS } from './status.enum';
+import { AuditService } from './services/audit.service';
+import { AuditLog } from './interfaces/audit-log.interface';
 
 @Injectable()
 export class QuotationService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditService: AuditService,
+  ) {}
 
   generateQuotationCode(
     type: 'quotation' | 'sales_order',
@@ -32,7 +37,7 @@ export class QuotationService {
     return quotationCode;
   }
 
-  async create(createQuotationDto: CreateQuotationDto) {
+  async create(createQuotationDto: CreateQuotationDto, user?: string) {
     const customer = await this.prisma.customer.findUnique({
       where: {
         id: createQuotationDto.customer_id,
@@ -75,6 +80,13 @@ export class QuotationService {
       0,
     );
 
+    // Create initial audit log entry
+    const auditLog: AuditLog = [];
+    if (user) {
+      const creationEntry = this.auditService.createCreationEntry(user);
+      auditLog.push(creationEntry);
+    }
+
     return this.prisma.quotation.create({
       data: {
         code: this.generateQuotationCode('quotation', customer.id),
@@ -92,6 +104,7 @@ export class QuotationService {
         other_amount: createQuotationDto.other_amount,
         total_price: totalPriceDetail + createQuotationDto.other_amount,
         status: QUOTATION_STATUS.PENDING,
+        audit_log: auditLog as any,
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -116,7 +129,7 @@ export class QuotationService {
       const skip = (page - 1) * pageSize;
 
       // Build where clause for filtering
-      let whereClause: any = {};
+      const whereClause: any = {};
 
       if (status) {
         whereClause.status = status;
@@ -169,7 +182,11 @@ export class QuotationService {
     });
   }
 
-  async update(id: string, updateQuotationDto: UpdateQuotationDto) {
+  async update(
+    id: string,
+    updateQuotationDto: UpdateQuotationDto,
+    user?: string,
+  ) {
     const quotation = await this.prisma.quotation.findUnique({
       where: {
         id: id,
@@ -185,6 +202,20 @@ export class QuotationService {
     if (quotation.status !== QUOTATION_STATUS.PENDING)
       throw new BadRequestException(`quotation with id ${id} is not pending`);
 
+    // Create audit log entry for status change
+    let updatedAuditLog = (quotation.audit_log as unknown as AuditLog) || [];
+    if (user && updateQuotationDto.status) {
+      const statusChangeEntry = this.auditService.createStatusChangeEntry(
+        user,
+        quotation.status,
+        updateQuotationDto.status,
+      );
+      updatedAuditLog = this.auditService.addAuditEntry(
+        updatedAuditLog,
+        statusChangeEntry,
+      );
+    }
+
     await this.prisma.$transaction(async (tx) => {
       await tx.quotation.update({
         where: {
@@ -192,6 +223,7 @@ export class QuotationService {
         },
         data: {
           status: updateQuotationDto.status,
+          audit_log: updatedAuditLog as any,
           updated_at: new Date(),
         },
       });

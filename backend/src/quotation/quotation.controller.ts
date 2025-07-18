@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  Request,
 } from '@nestjs/common';
 import { QuotationService } from './quotation.service';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
@@ -15,14 +16,18 @@ import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import { SalesAuthGuard } from 'src/auth/sales-auth.guard';
 import { PaginationParamsDto } from './dto/pagination-params.dto';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('quotation')
 export class QuotationController {
   constructor(private readonly quotationService: QuotationService) {}
 
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createQuotationDto: CreateQuotationDto) {
-    return this.quotationService.create(createQuotationDto);
+  create(@Body() createQuotationDto: CreateQuotationDto, @Request() req: any) {
+    const user = req.user?.username || 'unknown';
+    return this.quotationService.create(createQuotationDto, user);
   }
 
   @Get()
@@ -58,8 +63,10 @@ export class QuotationController {
   update(
     @Param('id') id: string,
     @Body() updateQuotationDto: UpdateQuotationDto,
+    @Request() req: any,
   ) {
-    return this.quotationService.update(id, updateQuotationDto);
+    const user = req.user?.username || 'unknown';
+    return this.quotationService.update(id, updateQuotationDto, user);
   }
 
   @Delete(':id')

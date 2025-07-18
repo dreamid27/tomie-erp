@@ -17,6 +17,17 @@ export interface CreateQuotationDto {
 
 const API_URL = `${import.meta.env.VITE_API_URL}`;
 
+export interface AuditLogEntry {
+  action: 'created' | 'status_changed' | 'updated';
+  user: string;
+  timestamp: string;
+  details: string;
+  previousValue?: string;
+  newValue?: string;
+}
+
+export type AuditLog = AuditLogEntry[];
+
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;
@@ -40,6 +51,7 @@ export interface Quotation {
   other_amount: number;
   total_price: number;
   status: string;
+  audit_log?: AuditLog;
   created_at: string;
   updated_at: string;
   details: {
@@ -75,7 +87,15 @@ export const fetchQuotations = async (
     params.append('excludeStatus', excludeStatus);
   }
 
-  const response = await fetch(`${API_URL}/quotation?${params.toString()}`);
+  const token = localStorage.getItem('token');
+
+  const response = await fetch(`${API_URL}/quotation?${params.toString()}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+  });
+
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -83,10 +103,13 @@ export const fetchQuotations = async (
 };
 
 export const createQuotation = async (data: CreateQuotationDto) => {
+  const token = localStorage.getItem('token');
+
   const response = await fetch(`${API_URL}/quotation`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: JSON.stringify(data),
   });
@@ -111,7 +134,15 @@ export const generateQuotationCode = async (): Promise<string> => {
 };
 
 export const fetchQuotationById = async (id: string): Promise<Quotation> => {
-  const response = await fetch(`${API_URL}/quotation/${id}`);
+  const token = localStorage.getItem('token');
+
+  const response = await fetch(`${API_URL}/quotation/${id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+  });
+
   if (!response.ok) {
     throw new Error('Failed to fetch quotation');
   }

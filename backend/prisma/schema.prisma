@@ -46,6 +46,7 @@ model quotation {
   other_amount   Float
   total_price    Float
   status         String   @default("pending")
+  audit_log      Json?    @default("[]")
   created_at     DateTime
   updated_at     DateTime @updatedAt
 
