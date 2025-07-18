@@ -66,12 +66,4 @@ export class SalesOrderService {
       },
     });
   }
-
-  update(id: number, updateSalesOrderDto: UpdateSalesOrderDto) {
-    return `This action updates a #${id} salesOrder`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} salesOrder`;
-  }
 }

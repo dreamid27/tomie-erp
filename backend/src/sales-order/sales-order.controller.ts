@@ -1,14 +1,5 @@
-import {
-  Controller,
-  Get,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { SalesOrderService } from './sales-order.service';
-import { UpdateSalesOrderDto } from './dto/update-sales-order.dto';
 import { PaginationParamsDto } from '../quotation/dto/pagination-params.dto';
 import { ApiQuery } from '@nestjs/swagger';
 
@@ -38,18 +29,5 @@ export class SalesOrderController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.salesOrderService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateSalesOrderDto: UpdateSalesOrderDto,
-  ) {
-    return this.salesOrderService.update(+id, updateSalesOrderDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.salesOrderService.remove(+id);
   }
 }

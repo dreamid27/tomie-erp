@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   Query,
   Request,
@@ -67,10 +66,5 @@ export class QuotationController {
   ) {
     const user = req.user?.username || 'unknown';
     return this.quotationService.update(id, updateQuotationDto, user);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.quotationService.remove(+id);
   }
 }
