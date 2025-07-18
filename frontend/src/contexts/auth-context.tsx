@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   isSalesUser: boolean;
   isCustomerUser: boolean;
+  userCustomerId: string | null;
   login: (token: string) => void;
   logout: () => void;
   refreshUser: () => void;
@@ -69,6 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const isSalesUser = user?.role === 'sales';
   const isCustomerUser = user?.role === 'customer';
+  const userCustomerId = user?.customer_id || null;
 
   const value: AuthContextType = {
     user,
@@ -76,6 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isLoading,
     isSalesUser,
     isCustomerUser,
+    userCustomerId,
     login,
     logout,
     refreshUser,

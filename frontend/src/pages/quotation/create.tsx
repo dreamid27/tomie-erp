@@ -40,6 +40,7 @@ import {
 import { getCustomers, type Customer } from '@/services/customer.service';
 import { getProducts, type Product } from '@/services/product.service';
 import { useLayout } from '@/contexts/layout-context';
+import { useAuth } from '@/contexts/auth-context';
 
 // Zod schema for form validation
 const quotationDetailSchema = z.object({
@@ -67,6 +68,7 @@ export default function CreateQuotationPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { setShowBottomNav } = useLayout();
+  const { isCustomerUser, userCustomerId } = useAuth();
   const today = format(new Date(), 'yyyy-MM-dd');
 
   // This would be replaced with actual customers and products data
@@ -90,7 +92,7 @@ export default function CreateQuotationPage() {
     defaultValues: {
       code: latestCode || 'Q-0001',
       date: today,
-      customer_id: '',
+      customer_id: isCustomerUser && userCustomerId ? userCustomerId : '',
       note: '',
       other_amount: 0,
       details: [
@@ -169,6 +171,13 @@ export default function CreateQuotationPage() {
       onError();
     }
   }, [form.formState.errors]);
+
+  // Set customer_id for customer users when component mounts or when userCustomerId changes
+  useEffect(() => {
+    if (isCustomerUser && userCustomerId && !form.getValues('customer_id')) {
+      form.setValue('customer_id', userCustomerId);
+    }
+  }, [isCustomerUser, userCustomerId, form]);
 
   // Watch for changes in form values and validate in real-time
   // const watchedDetails = form.watch('details');
@@ -271,20 +280,38 @@ export default function CreateQuotationPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Customer</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    {isCustomerUser ? (
+                      // For customer users: show read-only field with their customer name
                       <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select customer" />
-                        </SelectTrigger>
+                        <Input
+                          value={
+                            customers.find((c) => c.id === field.value)?.name ||
+                            'Loading...'
+                          }
+                          disabled
+                          className="bg-muted"
+                        />
                       </FormControl>
-                      <SelectContent>
-                        {customers.map((customer: Customer) => (
-                          <SelectItem key={customer.id} value={customer.id}>
-                            {customer.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    ) : (
+                      // For sales users: show full customer selection
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select customer" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {customers.map((customer: Customer) => (
+                            <SelectItem key={customer.id} value={customer.id}>
+                              {customer.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}

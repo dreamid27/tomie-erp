@@ -6,6 +6,9 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findOne(username: string) {
-    return await this.prisma.user.findFirst({ where: { username } });
+    return await this.prisma.user.findFirst({
+      where: { username },
+      include: { customer: true },
+    });
   }
 }

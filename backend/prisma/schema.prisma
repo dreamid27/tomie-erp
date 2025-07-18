@@ -23,6 +23,7 @@ model customer {
 
   quotation   quotation[]
   sales_order sales_order[]
+  users       user[]
 }
 
 model user {
@@ -30,6 +31,9 @@ model user {
   username       String
   password       String
   role           String
+  customer_id    String? @db.Uuid
+
+  customer       customer? @relation(fields: [customer_id], references: [id])
 }
 
 model quotation {

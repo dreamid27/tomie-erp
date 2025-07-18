@@ -15,7 +15,12 @@ export class AuthService {
     if (!user) throw new BadRequestException();
     const isPasswordValid = await bcrypt.compare(pass, user.password);
     if (!isPasswordValid) throw new BadRequestException('Password is invalid');
-    const payload = { sub: user.id, username: user.username, role: user.role };
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+      customer_id: user.customer_id,
+    };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

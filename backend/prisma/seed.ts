@@ -30,38 +30,6 @@ async function main() {
     skipDuplicates: true,
   });
 
-  // Create users
-  const salesPassword = await hashPassword('sales123');
-  const customerPassword = await hashPassword('customer123');
-
-  await prisma.user.createMany({
-    data: [
-      // Sales users
-      {
-        username: 'sales1',
-        password: salesPassword,
-        role: 'sales',
-      },
-      {
-        username: 'sales2',
-        password: salesPassword,
-        role: 'sales',
-      },
-      // Customer users
-      {
-        username: 'customer1',
-        password: customerPassword,
-        role: 'customer',
-      },
-      {
-        username: 'customer2',
-        password: customerPassword,
-        role: 'customer',
-      },
-    ],
-    skipDuplicates: true,
-  });
-
   await prisma.customer.createMany({
     data: [
       {
@@ -98,6 +66,40 @@ async function main() {
         street_address: '101 Elm St',
         city: 'Yetanothertown',
         phone: '567-890-1234',
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  // Create users
+  const salesPassword = await hashPassword('sales123');
+  const customerPassword = await hashPassword('customer123');
+
+  await prisma.user.createMany({
+    data: [
+      // Sales users
+      {
+        username: 'sales1',
+        password: salesPassword,
+        role: 'sales',
+      },
+      {
+        username: 'sales2',
+        password: salesPassword,
+        role: 'sales',
+      },
+      // Customer users
+      {
+        username: 'customer1',
+        password: customerPassword,
+        role: 'customer',
+        customer_id: '9bb580ac-067c-4f97-b344-34ebe213ae7f',
+      },
+      {
+        username: 'customer2',
+        password: customerPassword,
+        role: 'customer',
+        customer_id: '9fcf95e7-d66e-442a-a60c-622030f23fbb',
       },
     ],
     skipDuplicates: true,
