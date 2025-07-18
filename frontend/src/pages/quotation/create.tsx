@@ -46,8 +46,8 @@ const quotationDetailSchema = z.object({
   product_id: z.string().min(1, 'Product is required'),
   description: z.string().min(1, 'Description is required'),
   note: z.string().optional(),
-  unit_price: z.number().min(0, 'Unit price must be at least 0'),
-  qty: z.number().min(1, 'Quantity must be at least 1'),
+  unit_price: z.number().min(1, 'Unit price must be greater than 0'),
+  qty: z.number().min(1, 'Quantity must be greater than 0'),
 });
 
 const quotationFormSchema = z.object({
@@ -99,7 +99,7 @@ export default function CreateQuotationPage() {
           description: '',
           note: '',
           unit_price: 0,
-          qty: 1,
+          qty: 0,
         },
       ],
     },
@@ -169,6 +169,30 @@ export default function CreateQuotationPage() {
       onError();
     }
   }, [form.formState.errors]);
+
+  // Watch for changes in form values and validate in real-time
+  // const watchedDetails = form.watch('details');
+  // useEffect(() => {
+  //   // Validate all details whenever they change
+  //   watchedDetails?.forEach((detail, index) => {
+  //     console.log(detail, index, 'masuk sini');
+  //     if (
+  //       detail.unit_price !== undefined &&
+  //       !isValidPositiveNumber(detail.unit_price)
+  //     ) {
+  //       form.setError(`details.${index}.unit_price`, {
+  //         type: 'manual',
+  //         message: 'Unit price must be greater than zero',
+  //       });
+  //     }
+  //     if (detail.qty !== undefined && !isValidPositiveNumber(detail.qty)) {
+  //       form.setError(`details.${index}.qty`, {
+  //         type: 'manual',
+  //         message: 'Quantity must be greater than zero',
+  //       });
+  //     }
+  //   });
+  // }, [watchedDetails, form]);
 
   // Calculate subtotal
   const subtotal = form
@@ -349,7 +373,7 @@ export default function CreateQuotationPage() {
                             allowNegative={false}
                             value={field.value}
                             onValueChange={(values) => {
-                              field.onChange(values.floatValue || 0);
+                              field.onChange(values.floatValue);
                             }}
                             placeholder="Rp 0"
                           />
@@ -372,9 +396,9 @@ export default function CreateQuotationPage() {
                             allowNegative={false}
                             value={field.value}
                             onValueChange={(values) => {
-                              field.onChange(values.floatValue || 1);
+                              field.onChange(values.floatValue);
                             }}
-                            placeholder="1"
+                            placeholder="0"
                           />
                         </FormControl>
                         <FormMessage />
@@ -410,7 +434,7 @@ export default function CreateQuotationPage() {
                   description: '',
                   note: '',
                   unit_price: 0,
-                  qty: 1,
+                  qty: 0,
                 })
               }
             >

@@ -245,7 +245,7 @@ export default function QuotationPage() {
         {quotations?.map((quotation) => (
           <Card
             key={quotation.id}
-            className="shadow-sm bg-black/5 border-black/5 border-[1px] dark:bg-white/10 dark:border-white/10 py-0 cursor-pointer hover:bg-black/10 dark:hover:bg-white/20 hover:border-black/20 dark:hover:border-white/30 transition-all duration-200 hover:shadow-md"
+            className="shadow-none bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10 dark:border-white/10 py-0 cursor-pointer hover:bg-black/10 dark:hover:bg-white/20 hover:border-black/20 dark:hover:border-white/30 transition-all duration-200 hover:shadow-md"
             onClick={(e) => handleRowClick(quotation.id, e)}
           >
             <CardContent className="flex flex-col gap-4 px-4 py-4">
@@ -288,7 +288,7 @@ export default function QuotationPage() {
                 </div>
               </div>
               <Separator />
-              <div className="flex flex-col gap-2 bg-black/15 dark:bg-white/15 p-4 rounded-lg">
+              <div className="flex flex-col gap-2 bg-black/5 dark:bg-white/15 p-4 rounded-lg">
                 {quotation.details.map((detail, i) => (
                   <div key={detail.id} className="text-sm">
                     {i + 1}. {detail.description}, {detail.qty} x{' '}
