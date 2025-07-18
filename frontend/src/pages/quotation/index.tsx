@@ -26,6 +26,16 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { BadgeCheckIcon, XCircleIcon, ClockIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
@@ -245,7 +255,7 @@ export default function QuotationPage() {
             <TableRow>
               <TableHead className="w-[100px]">Code</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Customer</TableHead>
+              {isSalesUser && <TableHead>Customer</TableHead>}
               <TableHead>Subtotal</TableHead>
               <TableHead>Other Amount</TableHead>
               <TableHead>Total</TableHead>
@@ -262,12 +272,14 @@ export default function QuotationPage() {
               >
                 <TableCell className="font-medium">{quotation.code}</TableCell>
                 <TableCell>{formatDate(quotation.date)}</TableCell>
-                <TableCell>
-                  <div className="font-medium">{quotation.customer_name}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {quotation.city}
-                  </div>
-                </TableCell>
+                {isSalesUser && (
+                  <TableCell>
+                    <div className="font-medium">{quotation.customer_name}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {quotation.city}
+                    </div>
+                  </TableCell>
+                )}
                 <TableCell>{formatCurrency(quotation.subtotal)}</TableCell>
                 <TableCell>{formatCurrency(quotation.other_amount)}</TableCell>
                 <TableCell className="font-semibold">
@@ -335,8 +347,13 @@ export default function QuotationPage() {
             <CardContent className="flex flex-col gap-4 px-4 py-4">
               <div className="flex justify-between">
                 <div className="flex flex-col gap-2">
-                  <p className="text-sm">{quotation.code}</p>
+                  <p className="text-sm font-medium">{quotation.code}</p>
                   <p className="text-sm">{formatDate(quotation.date)}</p>
+                  {isSalesUser && (
+                    <p className="text-sm text-muted-foreground">
+                      {quotation.customer_name}
+                    </p>
+                  )}
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <p className="text-md font-medium">
@@ -420,34 +437,42 @@ export default function QuotationPage() {
       </div>
 
       {/* Confirmation Dialog */}
-      {isConfirmOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-background p-6 rounded-lg max-w-md w-full mx-4">
-            <h2 className="text-lg font-semibold mb-4">Confirm Approval</h2>
-            <p className="mb-6">
+      <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Approval</AlertDialogTitle>
+            <AlertDialogDescription>
               Are you sure you want to approve this quotation? This action
               cannot be undone.
-            </p>
-            <div className="flex justify-end space-x-3">
-              <Button
-                variant="outline"
-                onClick={cancelApprove}
-                disabled={isApproving}
-              >
-                Cancel
-              </Button>
-
-              <Button
-                variant="default"
-                onClick={confirmApprove}
-                disabled={isApproving}
-              >
-                {isApproving ? 'Approving...' : 'Approve'}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+              {quotationToApprove && (
+                <div className="mt-2 p-2 bg-muted rounded text-sm">
+                  <div>
+                    <strong>Quotation:</strong>{' '}
+                    {quotations.find((q) => q.id === quotationToApprove)?.code}
+                  </div>
+                  {isSalesUser && (
+                    <div className="mt-1">
+                      <strong>Customer:</strong>{' '}
+                      {
+                        quotations.find((q) => q.id === quotationToApprove)
+                          ?.customer_name
+                      }
+                    </div>
+                  )}
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelApprove} disabled={isApproving}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmApprove} disabled={isApproving}>
+              {isApproving ? 'Approving...' : 'Approve'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
