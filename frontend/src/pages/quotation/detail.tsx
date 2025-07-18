@@ -130,31 +130,42 @@ export default function QuotationDetailPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold">{quotation.code}</h1>
-            <p className="text-sm text-muted-foreground">Quotation Details</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Badge className={`${getStatusColor(quotation.status)} capitalize`}>
-            {quotation.status}
-          </Badge>
-          {quotation.status === 'pending' && isSalesUser && (
-            <Button onClick={handleApprove} disabled={isApproving} size="sm">
-              {isApproving ? 'Approving...' : 'Approve'}
-            </Button>
-          )}
         </div>
       </div>
 
       <div className="grid gap-6 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold">{quotation.code}</h1>
+
+            <div className="flex items-center gap-3">
+              <Badge
+                className={`${getStatusColor(quotation.status)} capitalize`}
+              >
+                {quotation.status}
+              </Badge>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            {quotation.status === 'pending' && isSalesUser && (
+              <Button
+                onClick={handleApprove}
+                disabled={isApproving}
+                size="lg"
+                className="w-full"
+                variant="default"
+              >
+                {isApproving ? 'Approving...' : 'Approve'}
+              </Button>
+            )}
+          </div>
+        </div>
+
         {/* Customer Information */}
         <Card className="bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10  dark:border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <FileText className="h-5 w-5" />
-              Customer Information
+              Quotation Information
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -178,16 +189,16 @@ export default function QuotationDetailPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
                   Address
                 </p>
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                   <div>
-                    <p className="text-base">{quotation.street_address}</p>
-                    <p className="text-base">{quotation.city}</p>
+                    <p className="text-base">
+                      {quotation.street_address}, {quotation.city}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -202,16 +213,10 @@ export default function QuotationDetailPage() {
               </div>
             </div>
 
-            {quotation.note && (
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Notes
-                </p>
-                <p className="text-base bg-gray-50 dark:bg-gray-900 p-3 rounded-md">
-                  {quotation.note}
-                </p>
-              </div>
-            )}
+            <div>
+              <p className="text-sm font-medium text-muted-foreground">Notes</p>
+              <p className="text-base rounded-md">{quotation.note || '-'}</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -219,8 +224,7 @@ export default function QuotationDetailPage() {
         <Card className="bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10  dark:border-white/10">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <DollarSign className="h-5 w-5" />
-              Items
+              Detail
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -287,7 +291,10 @@ export default function QuotationDetailPage() {
         </Card>
 
         {/* Audit History */}
-        <AuditHistory auditLog={quotation.audit_log} />
+        <AuditHistory
+          className="bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10  dark:border-white/10"
+          auditLog={quotation.audit_log}
+        />
       </div>
     </div>
   );
