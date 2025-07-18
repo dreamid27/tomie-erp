@@ -7,6 +7,7 @@ const menuItems = [
   { label: 'Sales Orders', path: '/sales-order' },
   { label: 'Customers', path: '/customers' },
   { label: 'Products', path: '/products' },
+  { label: 'Settings', path: '/settings' },
 ];
 
 export const Sidebar: React.FC = () => {

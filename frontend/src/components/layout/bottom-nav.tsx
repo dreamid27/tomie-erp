@@ -1,10 +1,11 @@
-import { Link, useLocation } from "react-router-dom";
-import { FileText, FileCheck } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Link, useLocation } from 'react-router-dom';
+import { FileText, FileCheck, Settings } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const navItems = [
-  { name: "Quotation", path: "/quotation", icon: FileText },
-  { name: "Sales Order", path: "/sales-order", icon: FileCheck },
+  { name: 'Quotation', path: '/quotation', icon: FileText },
+  { name: 'Sales Order', path: '/sales-order', icon: FileCheck },
+  { name: 'Settings', path: '/settings', icon: Settings },
 ];
 
 export function BottomNav() {
@@ -20,10 +21,10 @@ export function BottomNav() {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex flex-1 flex-col items-center py-2 px-4 text-xs font-medium",
+                'flex flex-1 flex-col items-center py-2 px-4 text-xs font-medium',
                 isActive
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? 'text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               <item.icon className="h-5 w-5" />

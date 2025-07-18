@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import QuotationPage from './pages/quotation';
 import CreateQuotationPage from './pages/quotation/create';
 import SalesOrderPage from './pages/sales-order';
+import SettingsPage from './pages/settings';
 import LoginPage from './pages/login';
 import { ThemeProvider } from '@/components/theme-provider';
 import { MainLayout } from '@/components/layout/main-layout';
@@ -35,6 +36,7 @@ function App() {
                       element={<CreateQuotationPage />}
                     />
                     <Route path="/sales-order" element={<SalesOrderPage />} />
+                    <Route path="/settings" element={<SettingsPage />} />
                   </Route>
                 </Route>
 
