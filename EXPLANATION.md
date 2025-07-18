@@ -1,3 +1,11 @@
+### Page Implementation
+
+- I built two main pages: the **Quotation** page and the **Sales Orders** page. On the Quotation page, I implemented basic tab-based filtering by status, based on the assumption that the number of quotations created by a user would be relatively small—so advanced filtering or search features were unnecessary.
+- I did not implement a sorting feature on this page, as it was deemed unnecessary at this stage.
+- On the Create Quotation page, I used `zod` and `react-hook-form` for form validation. Additionally, if the user is logged in as a customer, the customer input field will be pre-filled automatically with the data from the logged-in user.
+
+---
+
 ### Design Trade-Offs
 
 - I chose React for the frontend based on the assumption that it is widely used and familiar to most developers. Additionally, it has a vast ecosystem with numerous libraries and a large community, making it easier to find solutions when encountering errors.
