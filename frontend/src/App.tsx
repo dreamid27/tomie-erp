@@ -3,6 +3,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import QuotationPage from './pages/quotation';
 import CreateQuotationPage from './pages/quotation/create';
+import QuotationDetailPage from './pages/quotation/detail';
 import SalesOrderPage from './pages/sales-order';
 import SettingsPage from './pages/settings';
 import LoginPage from './pages/login';
@@ -36,6 +37,10 @@ function App() {
                       <Route
                         path="/quotation/create"
                         element={<CreateQuotationPage />}
+                      />
+                      <Route
+                        path="/quotation/:id"
+                        element={<QuotationDetailPage />}
                       />
                       <Route path="/sales-order" element={<SalesOrderPage />} />
                       <Route path="/settings" element={<SettingsPage />} />

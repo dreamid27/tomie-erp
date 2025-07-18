@@ -32,7 +32,7 @@ import { useAuth } from '@/contexts/auth-context';
 export default function QuotationPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isSalesUser, isCustomerUser } = useAuth();
+  const { isSalesUser } = useAuth();
   const [quotationToApprove, setQuotationToApprove] = useState<string | null>(
     null
   );
@@ -95,6 +95,15 @@ export default function QuotationPage() {
   const handleApproveClick = (id: string) => {
     setQuotationToApprove(id);
     setIsConfirmOpen(true);
+  };
+
+  const handleRowClick = (id: string, event: React.MouseEvent) => {
+    // Prevent navigation if clicking on buttons or interactive elements
+    const target = event.target as HTMLElement;
+    if (target.closest('button') || target.closest('[role="button"]')) {
+      return;
+    }
+    navigate(`/quotation/${id}`);
   };
 
   const confirmApprove = () => {
@@ -182,7 +191,11 @@ export default function QuotationPage() {
           </TableHeader>
           <TableBody>
             {quotations?.map((quotation) => (
-              <TableRow key={quotation.id}>
+              <TableRow
+                key={quotation.id}
+                className="cursor-pointer hover:bg-muted/50 transition-all duration-200 hover:shadow-sm"
+                onClick={(e) => handleRowClick(quotation.id, e)}
+              >
                 <TableCell className="font-medium">{quotation.code}</TableCell>
                 <TableCell>{formatDate(quotation.date)}</TableCell>
                 <TableCell>
@@ -216,7 +229,10 @@ export default function QuotationPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => navigate(`/quotation/${quotation.id}`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/quotation/${quotation.id}`);
+                    }}
                     aria-label="View Quotation"
                   >
                     View
@@ -225,7 +241,10 @@ export default function QuotationPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleApproveClick(quotation.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleApproveClick(quotation.id);
+                      }}
                       disabled={isApproving}
                       aria-label="Approve Quotation"
                     >
@@ -246,7 +265,8 @@ export default function QuotationPage() {
         {quotations?.map((quotation) => (
           <Card
             key={quotation.id}
-            className="shadow-sm bg-black/5 border-black/5 border-[1px] dark:bg-white/10  dark:border-white/10 py-0"
+            className="shadow-sm bg-black/5 border-black/5 border-[1px] dark:bg-white/10 dark:border-white/10 py-0 cursor-pointer hover:bg-black/10 dark:hover:bg-white/20 hover:border-black/20 dark:hover:border-white/30 transition-all duration-200 hover:shadow-md"
+            onClick={(e) => handleRowClick(quotation.id, e)}
           >
             <CardContent className="flex flex-col gap-4 px-4 py-4">
               <div className="flex justify-between">
@@ -296,7 +316,10 @@ export default function QuotationPage() {
               {quotation.status === 'pending' && isSalesUser && (
                 <div className="flex items-end justify-end">
                   <Button
-                    onClick={() => handleApproveClick(quotation.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleApproveClick(quotation.id);
+                    }}
                     disabled={
                       isApproving && quotationToApprove === quotation.id
                     }

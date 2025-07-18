@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateQuotationDto } from './dto/create-quotation.dto';
 import { UpdateQuotationDto } from './dto/update-quotation.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -154,6 +154,9 @@ export class QuotationService {
     return this.prisma.quotation.findUniqueOrThrow({
       where: {
         id,
+      },
+      include: {
+        details: true,
       },
     });
   }

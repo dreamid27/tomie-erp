@@ -105,6 +105,14 @@ export const generateQuotationCode = async (): Promise<string> => {
   return data.code || 'Q-0001';
 };
 
+export const fetchQuotationById = async (id: string): Promise<Quotation> => {
+  const response = await fetch(`${API_URL}/quotation/${id}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch quotation');
+  }
+  return response.json();
+};
+
 export const approveQuotation = async (id: string) => {
   const token = localStorage.getItem('token');
 

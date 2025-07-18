@@ -196,7 +196,7 @@ export default function CreateQuotationPage() {
           onSubmit={form.handleSubmit(onSubmit, onError)}
           className="space-y-6"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 dark:bg-white/10 border-[1] border-white/20 rounded-lg px-4 py-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10  dark:border-white/10 rounded-lg px-4 py-5">
             <div className="space-y-2">
               <p className="text-sm font-medium">Code: {form.watch('code')}</p>
             </div>
@@ -263,7 +263,7 @@ export default function CreateQuotationPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 dark:bg-white/10 border-[1] border-white/20 rounded-lg px-4 py-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10  dark:border-white/10 rounded-lg px-4 py-5">
             {fields.map((field, index) => (
               <div
                 key={field.id}
@@ -419,7 +419,7 @@ export default function CreateQuotationPage() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 dark:bg-white/10 border-[1] border-white/20 rounded-lg px-4 py-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#00000005] border-black/5 border-[1px] dark:bg-white/10  dark:border-white/10 rounded-lg px-4 py-5">
             <div className="space-y-4">
               <FormField
                 control={form.control}
@@ -490,7 +490,7 @@ export default function CreateQuotationPage() {
           </div>
 
           <div className="flex flex-col gap-4 justify-end space-x-4">
-            <Button type="submit" disabled={createMutation.isPending}>
+            <Button type="submit" size="lg" disabled={createMutation.isPending}>
               {createMutation.isPending ? 'Saving...' : 'Request Quotation'}
             </Button>
           </div>
