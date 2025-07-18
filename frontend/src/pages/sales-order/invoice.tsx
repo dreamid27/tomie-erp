@@ -40,24 +40,25 @@ export default function InvoicePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white">
-        <div className="no-print p-4 border-b bg-gray-50">
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-white dark:text-gray-900">
+        <div className="no-print p-4 border-b bg-gray-50 border-gray-200 dark:bg-gray-50 dark:border-gray-200">
           <div className="max-w-4xl mx-auto flex items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate('/sales-order')}
+              className="text-gray-700 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-700 dark:hover:text-gray-900 dark:hover:bg-gray-100"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Sales Orders
             </Button>
           </div>
         </div>
-        <div className="max-w-4xl mx-auto p-8">
+        <div className="max-w-4xl mx-auto p-8 bg-white dark:bg-white">
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
-            <div className="h-32 bg-gray-200 rounded"></div>
+            <div className="h-8 bg-gray-200 rounded w-1/4 dark:bg-gray-200"></div>
+            <div className="h-64 bg-gray-200 rounded dark:bg-gray-200"></div>
+            <div className="h-32 bg-gray-200 rounded dark:bg-gray-200"></div>
           </div>
         </div>
       </div>
