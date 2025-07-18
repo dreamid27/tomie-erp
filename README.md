@@ -2,6 +2,13 @@
 
 A full-stack ERP application built with NestJS (backend) and React + Vite (frontend), using PostgreSQL as the database.
 
+for login, you can use the following credentials:
+
+- username: sales1 (password: sales123)
+- username: sales2 (password: sales123)
+- username: customer1 (password: customer123)
+- username: customer2 (password: customer123)
+
 ## 📁 Folder Structure
 
 ```
@@ -62,11 +69,19 @@ docker-compose up -d --build
 
 After running the above commands, the application should be accessible at `http://localhost:3000` for backend and `http://localhost:5173` for frontend.
 
+for login, you can use the following credentials:
+
+- username: sales1 (password: sales123)
+- username: sales2 (password: sales123)
+- username: customer1 (password: customer123)
+- username: customer2 (password: customer123)
+
 ## 🚀 Development Mode
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v24 or higher)
+- Docker or Orbstack for running docker containers
 - npm or yarn
 - PostgreSQL (v13 or higher)
 
