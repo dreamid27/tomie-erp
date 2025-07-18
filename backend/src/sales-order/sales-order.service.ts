@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { UpdateSalesOrderDto } from './dto/update-sales-order.dto';
+
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()

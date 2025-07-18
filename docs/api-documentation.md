@@ -204,7 +204,51 @@ Get paginated list of sales orders.
 - `pageSize` (optional): Items per page (default: 10)
 - `status` (optional): Filter by status
 
-**Response (200):** Paginated sales orders (similar structure to quotations)
+**Response (200):**
+
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "code": "SO-0001",
+      "date": "2025-07-16T08:45:59.000Z",
+      "customer_name": "Customer Name",
+      "customer_id": "uuid",
+      "street_address": "123 Main St",
+      "city": "City",
+      "phone": "123-456-7890",
+      "note": "Optional note",
+      "subtotal": 20000,
+      "other_amount": 5000,
+      "total_price": 25000,
+      "status": "pending",
+      "created_at": "2025-07-16T08:45:59.000Z",
+      "updated_at": "2025-07-16T08:45:59.000Z",
+      "quotation_id": "uuid",
+      "details": [
+        {
+          "id": "uuid",
+          "product_id": "uuid",
+          "description": "Product description",
+          "note": "Item note",
+          "unit_price": 10000,
+          "qty": 2,
+          "total_price": 20000,
+          "created_at": "2025-07-16T08:45:59.000Z",
+          "updated_at": "2025-07-16T08:45:59.000Z",
+          "sales_orderId": "uuid"
+        }
+      ]
+    }
+  ],
+  "total": 100,
+  "page": 1,
+  "pageSize": 10,
+  "totalPages": 10,
+  "hasNextPage": true
+}
+```
 
 #### GET /sales-order/:id
 
@@ -214,29 +258,28 @@ Get specific sales order by ID.
 
 - `id`: Sales order UUID
 
-**Response (200):** Single sales order object
+**Response (200):**
 
-#### PATCH /sales-order/:id
-
-Update sales order.
-
-**Path Parameters:**
-
-- `id`: Sales order UUID
-
-**Request Body:** UpdateSalesOrderDto (partial update)
-
-**Response (200):** Updated sales order object
-
-#### DELETE /sales-order/:id
-
-Delete sales order.
-
-**Path Parameters:**
-
-- `id`: Sales order UUID
-
-**Response (200):** Success confirmation
+```json
+{
+  "id": "uuid",
+  "code": "SO-0001",
+  "date": "2025-07-16T08:45:59.000Z",
+  "customer_name": "Customer Name",
+  "customer_id": "uuid",
+  "street_address": "123 Main St",
+  "city": "City",
+  "phone": "123-456-7890",
+  "note": "Optional note",
+  "subtotal": 20000,
+  "other_amount": 5000,
+  "total_price": 25000,
+  "status": "pending",
+  "created_at": "2025-07-16T08:45:59.000Z",
+  "updated_at": "2025-07-16T08:45:59.000Z",
+  "quotation_id": "uuid"
+}
+```
 
 ---
 
