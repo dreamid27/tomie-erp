@@ -59,7 +59,8 @@ export interface Quotation {
 export const fetchQuotations = async (
   page: number = 1,
   pageSize: number = 10,
-  status?: string
+  status?: string,
+  excludeStatus?: string
 ): Promise<PaginatedResponse<Quotation>> => {
   const params = new URLSearchParams({
     page: page.toString(),
@@ -68,6 +69,10 @@ export const fetchQuotations = async (
 
   if (status) {
     params.append('status', status);
+  }
+
+  if (excludeStatus) {
+    params.append('excludeStatus', excludeStatus);
   }
 
   const response = await fetch(`${API_URL}/quotation?${params.toString()}`);

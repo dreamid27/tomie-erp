@@ -25,9 +25,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { BadgeCheckIcon, XCircleIcon, ClockIcon } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+
+type FilterTab = 'pending' | 'reviewed';
 
 export default function QuotationPage() {
   const navigate = useNavigate();
@@ -37,11 +40,12 @@ export default function QuotationPage() {
     null
   );
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<FilterTab>('pending');
   const pageSize = 4;
 
-  // For sales users, filter to show only pending quotations
-  // For customer users, show all quotations (they can't approve anyway)
-  const statusFilter = isSalesUser ? 'pending' : undefined;
+  // Determine status filter based on active tab
+  const statusFilter = activeTab === 'pending' ? 'pending' : undefined;
+  const excludeStatus = activeTab === 'reviewed' ? 'pending' : undefined;
 
   const {
     data: paginatedData,
@@ -52,14 +56,39 @@ export default function QuotationPage() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery<PaginatedResponse<Quotation>>({
-    queryKey: ['quotations', pageSize, statusFilter],
+    queryKey: ['quotations', pageSize, activeTab, statusFilter, excludeStatus],
     queryFn: ({ pageParam }) =>
-      fetchQuotations(pageParam as number, pageSize, statusFilter),
+      fetchQuotations(
+        pageParam as number,
+        pageSize,
+        statusFilter,
+        excludeStatus
+      ),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       return lastPage.hasNextPage ? lastPage.page + 1 : undefined;
     },
   });
+
+  // Get counts for tab badges (first page only to get total counts)
+  const { data: pendingData } = useInfiniteQuery<PaginatedResponse<Quotation>>({
+    queryKey: ['quotations-count', 'pending'],
+    queryFn: () => fetchQuotations(1, 1, 'pending'),
+    initialPageParam: 1,
+    getNextPageParam: () => undefined, // Only fetch first page for count
+  });
+
+  const { data: reviewedData } = useInfiniteQuery<PaginatedResponse<Quotation>>(
+    {
+      queryKey: ['quotations-count', 'reviewed'],
+      queryFn: () => fetchQuotations(1, 1, undefined, 'pending'),
+      initialPageParam: 1,
+      getNextPageParam: () => undefined, // Only fetch first page for count
+    }
+  );
+
+  const pendingCount = pendingData?.pages[0]?.total || 0;
+  const reviewedCount = reviewedData?.pages[0]?.total || 0;
 
   // Flatten the data from all pages
   const quotations = useMemo(
@@ -165,13 +194,48 @@ export default function QuotationPage() {
           <h1 className="text-2xl font-bold">Quotation List</h1>
           {!isLoading && (
             <p className="text-sm text-muted-foreground">
-              Showing {quotations.length} of {totalItems} quotations
+              Showing {quotations.length} of {totalItems} {activeTab} quotations
             </p>
           )}
         </div>
         <Button onClick={() => navigate('/quotation/create')}>
           <PlusIcon className="mr-2 h-4 w-4" /> Create New
         </Button>
+      </div>
+
+      {/* Status Filter Tabs */}
+      <div className="mb-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as FilterTab)}
+        >
+          <TabsList className="grid w-full max-w-md grid-cols-2 h-auto">
+            <TabsTrigger
+              value="pending"
+              className="flex items-center gap-1 sm:gap-2 py-2"
+            >
+              <ClockIcon className="h-4 w-4" />
+              <span>Pending</span>
+              {pendingCount > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">
+                  {pendingCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger
+              value="reviewed"
+              className="flex items-center gap-1 sm:gap-2 py-2"
+            >
+              <BadgeCheckIcon className="h-4 w-4" />
+              <span>Reviewed</span>
+              {reviewedCount > 0 && (
+                <Badge variant="secondary" className="ml-1 text-xs">
+                  {reviewedCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
       {/* Desktop Table */}

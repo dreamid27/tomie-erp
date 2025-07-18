@@ -105,16 +105,24 @@ export class QuotationService {
     page = 1,
     pageSize = 10,
     status,
+    excludeStatus,
   }: {
     page: number;
     pageSize: number;
     status?: string;
+    excludeStatus?: string;
   }) {
     try {
       const skip = (page - 1) * pageSize;
 
       // Build where clause for filtering
-      const whereClause = status ? { status } : {};
+      let whereClause: any = {};
+
+      if (status) {
+        whereClause.status = status;
+      } else if (excludeStatus) {
+        whereClause.status = { not: excludeStatus };
+      }
 
       const [total, data] = await Promise.all([
         this.prisma.quotation.count({ where: whereClause }),
