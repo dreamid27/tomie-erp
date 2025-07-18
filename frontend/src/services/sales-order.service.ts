@@ -77,3 +77,22 @@ export const fetchSalesOrders = async (
   }
   return response.json();
 };
+
+export const fetchSalesOrderById = async (id: string): Promise<SalesOrder> => {
+  const token = localStorage.getItem('token');
+
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/sales-order/${id}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch sales order');
+  }
+  return response.json();
+};

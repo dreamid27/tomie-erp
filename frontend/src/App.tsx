@@ -5,6 +5,7 @@ import QuotationPage from './pages/quotation';
 import CreateQuotationPage from './pages/quotation/create';
 import QuotationDetailPage from './pages/quotation/detail';
 import SalesOrderPage from './pages/sales-order';
+import InvoicePage from './pages/sales-order/invoice';
 import SettingsPage from './pages/settings';
 import LoginPage from './pages/login';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -45,6 +46,8 @@ function App() {
                       <Route path="/sales-order" element={<SalesOrderPage />} />
                       <Route path="/settings" element={<SettingsPage />} />
                     </Route>
+                    {/* Standalone invoice page without layout */}
+                    <Route path="/sales-order/:id" element={<InvoicePage />} />
                   </Route>
 
                   <Route path="*" element={<Navigate to="/login" replace />} />

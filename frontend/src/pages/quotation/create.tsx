@@ -179,30 +179,6 @@ export default function CreateQuotationPage() {
     }
   }, [isCustomerUser, userCustomerId, form]);
 
-  // Watch for changes in form values and validate in real-time
-  // const watchedDetails = form.watch('details');
-  // useEffect(() => {
-  //   // Validate all details whenever they change
-  //   watchedDetails?.forEach((detail, index) => {
-  //     console.log(detail, index, 'masuk sini');
-  //     if (
-  //       detail.unit_price !== undefined &&
-  //       !isValidPositiveNumber(detail.unit_price)
-  //     ) {
-  //       form.setError(`details.${index}.unit_price`, {
-  //         type: 'manual',
-  //         message: 'Unit price must be greater than zero',
-  //       });
-  //     }
-  //     if (detail.qty !== undefined && !isValidPositiveNumber(detail.qty)) {
-  //       form.setError(`details.${index}.qty`, {
-  //         type: 'manual',
-  //         message: 'Quantity must be greater than zero',
-  //       });
-  //     }
-  //   });
-  // }, [watchedDetails, form]);
-
   // Calculate subtotal
   const subtotal = form
     .watch('details')

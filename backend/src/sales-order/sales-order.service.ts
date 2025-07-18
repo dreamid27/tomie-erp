@@ -64,6 +64,9 @@ export class SalesOrderService {
       where: {
         id: id,
       },
+      include: {
+        details: true,
+      },
     });
   }
 }
