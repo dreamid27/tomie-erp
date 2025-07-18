@@ -1,14 +1,20 @@
 import { BottomNav } from './bottom-nav';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useLayout } from '@/contexts/layout-context';
 import { Button } from '@/components/ui/button';
-import { Settings } from 'lucide-react';
+import { Settings, FileText, FileCheck } from 'lucide-react';
 import { useScroll } from '@/hooks/use-scroll';
 import { cn } from '@/lib/utils';
+
+const navItems = [
+  { name: 'Quotation', path: '/quotation', icon: FileText },
+  { name: 'Sales Order', path: '/sales-order', icon: FileCheck },
+];
 
 export function MainLayout() {
   const { showBottomNav } = useLayout();
   const { scrollDirection, isAtTop } = useScroll();
+  const location = useLocation();
 
   // Determine if header should be visible
   const isHeaderVisible = isAtTop || scrollDirection === 'up';
@@ -22,14 +28,39 @@ export function MainLayout() {
           isHeaderVisible ? 'translate-y-0' : '-translate-y-full'
         )}
       >
-        <h1 className="text-xl font-semibold">Tomie ERP</h1>
-        <div>
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/settings" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </Link>
-          </Button>
+        <div className="container mx-auto p-4 max-w-4xl flex justify-between items-center">
+          <h1 className="text-xl font-semibold md:hidden">Tomie ERP</h1>
+
+          {/* Desktop Navigation Menu */}
+          <nav className="hidden md:flex items-center gap-6">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div>
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/settings" className="flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                <span className="hidden sm:inline">Settings</span>
+              </Link>
+            </Button>
+          </div>
         </div>
       </header>
       {/* Add top padding to account for fixed header */}

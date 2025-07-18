@@ -7,18 +7,10 @@ import {
 } from '@/services/sales-order.service';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom';
-import {
-  PlusIcon,
-  ShoppingCartIcon,
-  CheckCircleIcon,
-  ClockIcon,
-  XCircleIcon,
-  AlertCircleIcon,
-} from 'lucide-react';
+import { ShoppingCartIcon } from 'lucide-react';
 
 export default function SalesOrderPage() {
   const navigate = useNavigate();
@@ -94,50 +86,6 @@ export default function SalesOrderPage() {
     }).format(value);
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig: Record<
-      string,
-      { className: string; icon: React.ReactNode }
-    > = {
-      draft: {
-        className:
-          'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
-        icon: <AlertCircleIcon className="h-3 w-3 mr-1" />,
-      },
-      confirmed: {
-        className:
-          'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-        icon: <CheckCircleIcon className="h-3 w-3 mr-1" />,
-      },
-      processing: {
-        className:
-          'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-        icon: <ClockIcon className="h-3 w-3 mr-1" />,
-      },
-      completed: {
-        className:
-          'bg-green-100 text-green-800 dark:bg-green-600 dark:text-green-200',
-        icon: <CheckCircleIcon className="h-3 w-3 mr-1" />,
-      },
-      cancelled: {
-        className: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-        icon: <XCircleIcon className="h-3 w-3 mr-1" />,
-      },
-    };
-
-    const config = statusConfig[status.toLowerCase()] || {
-      className: 'bg-gray-100 text-gray-800',
-      icon: <AlertCircleIcon className="h-3 w-3 mr-1" />,
-    };
-
-    return (
-      <Badge className={`capitalize ${config.className}`}>
-        {config.icon}
-        {status}
-      </Badge>
-    );
-  };
-
   const handleRowClick = (id: string, event: React.MouseEvent) => {
     // Prevent navigation if clicking on buttons or interactive elements
     const target = event.target as HTMLElement;
@@ -148,7 +96,7 @@ export default function SalesOrderPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 max-w-4xl">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h1 className="text-2xl font-bold">Sales Order List</h1>
