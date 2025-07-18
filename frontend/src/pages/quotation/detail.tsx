@@ -14,6 +14,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import {
   fetchQuotationById,
@@ -29,6 +40,7 @@ export default function QuotationDetailPage() {
   const queryClient = useQueryClient();
   const { isSalesUser } = useAuth();
   const [isApproving, setIsApproving] = useState(false);
+  const [showApproveDialog, setShowApproveDialog] = useState(false);
 
   const {
     data: quotation,
@@ -82,6 +94,7 @@ export default function QuotationDetailPage() {
   const handleApprove = () => {
     if (id) {
       approve(id);
+      setShowApproveDialog(false);
     }
   };
 
@@ -148,15 +161,53 @@ export default function QuotationDetailPage() {
           </div>
           <div className="flex justify-end">
             {quotation.status === 'pending' && isSalesUser && (
-              <Button
-                onClick={handleApprove}
-                disabled={isApproving}
-                size="lg"
-                className="w-full"
-                variant="default"
+              <AlertDialog
+                open={showApproveDialog}
+                onOpenChange={setShowApproveDialog}
               >
-                {isApproving ? 'Approving...' : 'Approve'}
-              </Button>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    disabled={isApproving}
+                    size="lg"
+                    className="w-full"
+                    variant="default"
+                  >
+                    {isApproving ? 'Approving...' : 'Approve'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Approval</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to approve this quotation? This
+                      action cannot be undone.
+                      <div className="mt-2 p-2 bg-muted rounded text-sm">
+                        <div>
+                          <strong>Quotation:</strong> {quotation.code}
+                        </div>
+                        <div>
+                          <strong>Customer:</strong> {quotation.customer_name}
+                        </div>
+                        <div>
+                          <strong>Total:</strong>{' '}
+                          {formatCurrency(quotation.total_price)}
+                        </div>
+                      </div>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel disabled={isApproving}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleApprove}
+                      disabled={isApproving}
+                    >
+                      {isApproving ? 'Approving...' : 'Approve'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
           </div>
         </div>

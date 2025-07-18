@@ -14,14 +14,6 @@ import {
   fetchQuotations,
   type Quotation,
 } from '@/services/quotation.service';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -51,7 +43,7 @@ export default function QuotationPage() {
   );
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('pending');
-  const pageSize = 4;
+  const pageSize = 10;
 
   // Determine status filter based on active tab
   const statusFilter = activeTab === 'pending' ? 'pending' : undefined;
@@ -248,96 +240,8 @@ export default function QuotationPage() {
         </Tabs>
       </div>
 
-      {/* Desktop Table */}
-      <div className="rounded-md border hidden md:block">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Code</TableHead>
-              <TableHead>Date</TableHead>
-              {isSalesUser && <TableHead>Customer</TableHead>}
-              <TableHead>Subtotal</TableHead>
-              <TableHead>Other Amount</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {quotations?.map((quotation) => (
-              <TableRow
-                key={quotation.id}
-                className="cursor-pointer hover:bg-muted/50 transition-all duration-200 hover:shadow-sm"
-                onClick={(e) => handleRowClick(quotation.id, e)}
-              >
-                <TableCell className="font-medium">{quotation.code}</TableCell>
-                <TableCell>{formatDate(quotation.date)}</TableCell>
-                {isSalesUser && (
-                  <TableCell>
-                    <div className="font-medium">{quotation.customer_name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {quotation.city}
-                    </div>
-                  </TableCell>
-                )}
-                <TableCell>{formatCurrency(quotation.subtotal)}</TableCell>
-                <TableCell>{formatCurrency(quotation.other_amount)}</TableCell>
-                <TableCell className="font-semibold">
-                  {formatCurrency(quotation.total_price)}
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      quotation.status === 'draft'
-                        ? 'outline'
-                        : quotation.status === 'sent'
-                        ? 'secondary'
-                        : quotation.status === 'approved'
-                        ? 'default'
-                        : 'destructive'
-                    }
-                  >
-                    {quotation.status.charAt(0).toUpperCase() +
-                      quotation.status.slice(1)}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/quotation/${quotation.id}`);
-                    }}
-                    aria-label="View Quotation"
-                  >
-                    View
-                  </Button>
-                  {quotation.status === 'pending' && isSalesUser && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleApproveClick(quotation.id);
-                      }}
-                      disabled={isApproving}
-                      aria-label="Approve Quotation"
-                    >
-                      {isApproving && quotationToApprove === quotation.id
-                        ? 'Approving...'
-                        : 'Approve'}
-                    </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
       {/* Mobile Cards */}
-      <div className="block md:hidden space-y-4">
+      <div className="block space-y-4">
         {quotations?.map((quotation) => (
           <Card
             key={quotation.id}

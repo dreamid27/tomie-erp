@@ -123,7 +123,6 @@ export default function CreateQuotationPage() {
   });
 
   const onSubmit = (data: QuotationFormData) => {
-    console.log(data, 'data');
     const submitData: CreateQuotationDto = {
       ...data,
       date: new Date(data.date).toISOString(),
