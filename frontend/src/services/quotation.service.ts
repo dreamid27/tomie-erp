@@ -58,11 +58,19 @@ export interface Quotation {
 
 export const fetchQuotations = async (
   page: number = 1,
-  pageSize: number = 10
+  pageSize: number = 10,
+  status?: string
 ): Promise<PaginatedResponse<Quotation>> => {
-  const response = await fetch(
-    `${API_URL}/quotation?page=${page}&pageSize=${pageSize}`
-  );
+  const params = new URLSearchParams({
+    page: page.toString(),
+    pageSize: pageSize.toString(),
+  });
+
+  if (status) {
+    params.append('status', status);
+  }
+
+  const response = await fetch(`${API_URL}/quotation?${params.toString()}`);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }
@@ -98,10 +106,13 @@ export const generateQuotationCode = async (): Promise<string> => {
 };
 
 export const approveQuotation = async (id: string) => {
+  const token = localStorage.getItem('token');
+
   const response = await fetch(`${API_URL}/quotation/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: JSON.stringify({
       status: 'approved',

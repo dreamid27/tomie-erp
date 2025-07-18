@@ -28,10 +28,19 @@ export class QuotationController {
   @Get()
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'pageSize', required: false, type: Number })
-  findAll(@Query() { page = 1, pageSize = 10 }: PaginationParamsDto) {
+  @ApiQuery({ name: 'status', required: false, type: String })
+  findAll(
+    @Query()
+    {
+      page = 1,
+      pageSize = 10,
+      status,
+    }: PaginationParamsDto & { status?: string },
+  ) {
     return this.quotationService.findAll({
       page: Number(page),
       pageSize: Number(pageSize),
+      status,
     });
   }
 

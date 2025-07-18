@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
+import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useMutation } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 import {
   Form,
   FormControl,
@@ -13,31 +13,32 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { login, type LoginCredentials } from "@/services/auth.service";
-import { TOKEN } from "@/constants";
+} from '@/components/ui/form';
+import { login, type LoginCredentials } from '@/services/auth.service';
+import { useAuth } from '@/contexts/auth-context';
 
 // Define the form schema with Zod
 const loginSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
   const { mutate: loginUser, isPending: isLoading } = useMutation({
     mutationFn: (credentials: LoginCredentials) => login(credentials),
     onSuccess: (data) => {
-      localStorage.setItem(TOKEN, data.access_token);
-      toast.success("Login successful!");
-      navigate("/");
+      authLogin(data.access_token);
+      toast.success('Login successful!');
+      navigate('/');
     },
     onError: (error: Error) => {
-      console.log(error, "error");
-      toast.error(error.message || "Login failed. Please try again.");
+      console.log(error, 'error');
+      toast.error(error.message || 'Login failed. Please try again.');
     },
   });
 
@@ -47,8 +48,8 @@ export default function LoginPage() {
 
   const form = useForm<LoginFormData>({
     defaultValues: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     },
     resolver: zodResolver(loginSchema),
   });
@@ -98,7 +99,7 @@ export default function LoginPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
           </form>
         </Form>

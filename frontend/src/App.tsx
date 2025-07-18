@@ -11,6 +11,7 @@ import { MainLayout } from '@/components/layout/main-layout';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthRoute from './lib/auth-router';
 import { LayoutProvider } from '@/contexts/layout-context';
+import { AuthProvider } from '@/contexts/auth-context';
 
 const queryClient = new QueryClient();
 
@@ -20,30 +21,32 @@ function App() {
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Toaster />
         <QueryClientProvider client={queryClient}>
-          <LayoutProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route element={<AuthRoute type="Guest" />}>
-                  <Route path="/login" element={<LoginPage />} />
-                </Route>
-
-                <Route element={<AuthRoute type="Private" />}>
-                  <Route element={<MainLayout />}>
-                    <Route path="/" element={<QuotationPage />} />
-                    <Route path="/quotation" element={<QuotationPage />} />
-                    <Route
-                      path="/quotation/create"
-                      element={<CreateQuotationPage />}
-                    />
-                    <Route path="/sales-order" element={<SalesOrderPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
+          <AuthProvider>
+            <LayoutProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route element={<AuthRoute type="Guest" />}>
+                    <Route path="/login" element={<LoginPage />} />
                   </Route>
-                </Route>
 
-                <Route path="*" element={<Navigate to="/login" replace />} />
-              </Routes>
-            </BrowserRouter>
-          </LayoutProvider>
+                  <Route element={<AuthRoute type="Private" />}>
+                    <Route element={<MainLayout />}>
+                      <Route path="/" element={<QuotationPage />} />
+                      <Route path="/quotation" element={<QuotationPage />} />
+                      <Route
+                        path="/quotation/create"
+                        element={<CreateQuotationPage />}
+                      />
+                      <Route path="/sales-order" element={<SalesOrderPage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                    </Route>
+                  </Route>
+
+                  <Route path="*" element={<Navigate to="/login" replace />} />
+                </Routes>
+              </BrowserRouter>
+            </LayoutProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </TooltipProvider>

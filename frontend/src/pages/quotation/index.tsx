@@ -27,17 +27,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { BadgeCheckIcon, XCircleIcon, ClockIcon } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function QuotationPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { isSalesUser, isCustomerUser } = useAuth();
   const [quotationToApprove, setQuotationToApprove] = useState<string | null>(
     null
   );
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const pageSize = 4;
-  //TODO: change this
-  let isSales = true;
+
+  // For sales users, filter to show only pending quotations
+  // For customer users, show all quotations (they can't approve anyway)
+  const statusFilter = isSalesUser ? 'pending' : undefined;
 
   const {
     data: paginatedData,
@@ -48,8 +52,9 @@ export default function QuotationPage() {
     hasNextPage,
     fetchNextPage,
   } = useInfiniteQuery<PaginatedResponse<Quotation>>({
-    queryKey: ['quotations', pageSize],
-    queryFn: ({ pageParam }) => fetchQuotations(pageParam as number, pageSize),
+    queryKey: ['quotations', pageSize, statusFilter],
+    queryFn: ({ pageParam }) =>
+      fetchQuotations(pageParam as number, pageSize, statusFilter),
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       return lastPage.hasNextPage ? lastPage.page + 1 : undefined;
@@ -216,7 +221,7 @@ export default function QuotationPage() {
                   >
                     View
                   </Button>
-                  {quotation.status === 'pending' && (
+                  {quotation.status === 'pending' && isSalesUser && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -288,7 +293,7 @@ export default function QuotationPage() {
                   </div>
                 ))}
               </div>
-              {quotation.status === 'pending' && isSales && (
+              {quotation.status === 'pending' && isSalesUser && (
                 <div className="flex items-end justify-end">
                   <Button
                     onClick={() => handleApproveClick(quotation.id)}

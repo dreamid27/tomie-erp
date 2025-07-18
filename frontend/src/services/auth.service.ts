@@ -56,3 +56,11 @@ export const logout = async (): Promise<void> => {
   // Clear session storage if used
   sessionStorage.clear();
 };
+
+export const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};

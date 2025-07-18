@@ -1,12 +1,13 @@
-import { TOKEN } from "@/constants";
-import { PAGE_PATH } from "@/constants/route";
-import { useEffect, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { TOKEN } from '@/constants';
+import { PAGE_PATH } from '@/constants/route';
+import { useEffect, useState } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/auth-context';
 
 export const RouteTypes = {
-  Guest: "Guest",
-  Public: "Public",
-  Private: "Private",
+  Guest: 'Guest',
+  Public: 'Public',
+  Private: 'Private',
 } as const;
 
 interface IAuthRouter {
@@ -19,30 +20,36 @@ const AuthRoute = ({
   loadingComponent = <div>Loading...</div>,
 }: IAuthRouter) => {
   const navigate = useNavigate();
+  const { isAuthenticated, refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
       const authToken = localStorage.getItem(TOKEN);
 
-      if (type === RouteTypes.Guest && authToken) {
+      if (type === RouteTypes.Guest && authToken && isAuthenticated) {
         navigate(PAGE_PATH.HOME);
         return;
       }
 
-      if (type === RouteTypes.Private && !authToken) {
+      if (type === RouteTypes.Private && (!authToken || !isAuthenticated)) {
         navigate(PAGE_PATH.LOGIN);
         return;
       }
+
+      // Refresh user data if we have a token but no user data
+      if (authToken && !isAuthenticated) {
+        refreshUser();
+      }
     } catch (error) {
-      console.error("Authentication check failed:", error);
+      console.error('Authentication check failed:', error);
       if (type === RouteTypes.Private) {
         navigate(PAGE_PATH.LOGIN);
       }
     } finally {
       setIsLoading(false);
     }
-  }, [type]); // Removed router from dependencies as it's stable
+  }, [type, isAuthenticated]); // Added isAuthenticated to dependencies
 
   if (isLoading) {
     return <>{loadingComponent}</>;

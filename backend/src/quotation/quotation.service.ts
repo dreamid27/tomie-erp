@@ -104,15 +104,22 @@ export class QuotationService {
   async findAll({
     page = 1,
     pageSize = 10,
+    status,
   }: {
     page: number;
     pageSize: number;
+    status?: string;
   }) {
     try {
       const skip = (page - 1) * pageSize;
+
+      // Build where clause for filtering
+      const whereClause = status ? { status } : {};
+
       const [total, data] = await Promise.all([
-        this.prisma.quotation.count(),
+        this.prisma.quotation.count({ where: whereClause }),
         this.prisma.quotation.findMany({
+          where: whereClause,
           include: {
             details: true,
           },

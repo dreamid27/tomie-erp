@@ -1,14 +1,7 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma.service';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
-
-const SALT_ROUNDS = 10;
 
 @Injectable()
 export class AuthService {
@@ -22,7 +15,7 @@ export class AuthService {
     if (!user) throw new BadRequestException();
     const isPasswordValid = await bcrypt.compare(pass, user.password);
     if (!isPasswordValid) throw new BadRequestException('Password is invalid');
-    const payload = { sub: user.id, username: user.username };
+    const payload = { sub: user.id, username: user.username, role: user.role };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
